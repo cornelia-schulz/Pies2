@@ -61,3 +61,5 @@ C:\Working\courses\Pies\Pies.API\bin\Debug\netcoreapp3.1\runtimes\win-x86\native
 C:\Working\courses\Pies\Pies.API\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 C:\Working\courses\Pies\Pies.API\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Working\courses\Pies\Pies.API\obj\Debug\netcoreapp3.1\Pies.API.csproj.CopyComplete
+C:\Working\courses\Pies\Pies.API\bin\Debug\netcoreapp3.1\AutoMapper.dll
+C:\Working\courses\Pies\Pies.API\bin\Debug\netcoreapp3.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

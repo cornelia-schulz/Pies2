@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pies.API.DbContexts;
 using Pies.API.Services;
+using System;
 
 namespace Pies.API
 {
@@ -21,8 +22,14 @@ namespace Pies.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           services.AddControllers();
-             
+            // default output is json, add xml as additional format and send a 406 not acceptable for any other formats requested in the header
+            services.AddControllers(setupAction =>
+            {
+                setupAction.ReturnHttpNotAcceptable = true;
+            }).AddXmlDataContractSerializerFormatters();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddScoped<IPiesRepository, PiesRepository>();
 
             services.AddDbContext<PiesContext>(options =>
@@ -46,6 +53,7 @@ namespace Pies.API
 
             app.UseEndpoints(endpoints =>
             {
+                // Attribute based routing
                 endpoints.MapControllers();
             });
         }

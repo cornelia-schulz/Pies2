@@ -26,7 +26,7 @@ namespace Pies.API.Services
             {
                 throw new ArgumentNullException(nameof(pie));
             }
-            // always set the AuthorId to the passed-in authorId
+            // always set the PieTypeId to the passed-in pieTypeId
             pie.PieTypeId = pieTypeId;
             _context.Pies.Add(pie); 
         }         
