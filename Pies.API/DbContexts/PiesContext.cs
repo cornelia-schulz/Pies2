@@ -13,6 +13,8 @@ namespace Pies.API.DbContexts
 
         public DbSet<PieType> PieTypes { get; set; }
         public DbSet<Pie> Pies { get; set; }
+        public DbSet<PieFlavourType> PieFlavourTypes { get; set; }
+        public DbSet<PieReviewStatus> PieReviewStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -101,7 +103,42 @@ namespace Pies.API.DbContexts
                }
                );
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<PieFlavourType>().HasData(
+               new PieFlavourType()
+               {
+                   Id = 1,
+                   FlavourType = "Gourmet"
+               },
+               new PieFlavourType()
+               {
+                   Id = 2,
+                   FlavourType = "Sweet"
+               },
+               new PieFlavourType()
+               {
+                   Id = 3,
+                   FlavourType = "Savoury",
+               }
+               );
+
+            modelBuilder.Entity<PieReviewStatus>().HasData(
+                new PieReviewStatus()
+                {
+                    Id = 1,
+                    ReviewStatus = "Pending"
+                },
+                new PieReviewStatus()
+                {
+                    Id = 2,
+                    ReviewStatus = "Reviewed"
+                },
+                new PieReviewStatus()
+                {
+                    Id = 3,
+                    ReviewStatus = "Removed"
+                }
+                );
+           base.OnModelCreating(modelBuilder);
         }
     }
 }

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Pies.API.Entities
 {
-    public class PieReviewStatus
+    public class PieFlavourType
     {
         public int Id { get; set; }
-        public string ReviewStatus { get; set; }
+        public string FlavourType { get; set; }
     }
 }
