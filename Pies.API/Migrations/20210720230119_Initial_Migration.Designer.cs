@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pies.API.DbContexts;
 
 namespace Pies.API.Migrations
 {
     [DbContext(typeof(PiesContext))]
-    [Migration("20210719033449_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20210720230119_Initial_Migration")]
+    partial class Initial_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -85,6 +86,116 @@ namespace Pies.API.Migrations
                             PieTypeId = new Guid("2902b665-1190-4c70-9915-b9c2d7680450"),
                             ShopId = 2,
                             UserId = 1
+                        });
+                });
+
+            modelBuilder.Entity("Pies.API.Entities.PieFlavourType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("FlavourType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PieFlavourTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FlavourType = "Gourmet"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            FlavourType = "Sweet"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            FlavourType = "Savoury"
+                        });
+                });
+
+            modelBuilder.Entity("Pies.API.Entities.PieReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DateCreated")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PieId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PieReviews");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("40ff5488-fdab-45c7-bc3a-14302d59869a"),
+                            DateCreated = new DateTimeOffset(new DateTime(2020, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 13, 0, 0, 0)),
+                            Description = "What a great pie",
+                            PieId = new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
+                            Rating = 5,
+                            UserId = new Guid("d8663e5e-7486-4f81-8739-6e0de1bea7ee")
+                        },
+                        new
+                        {
+                            Id = new Guid("40ff5488-fdab-45e7-bc3a-14302d59869a"),
+                            DateCreated = new DateTimeOffset(new DateTime(2020, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 12, 0, 0, 0)),
+                            Description = "Superb",
+                            PieId = new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
+                            Rating = 5,
+                            UserId = new Guid("d8663e5e-7486-4f23-8739-6e0de1bea7ee")
+                        });
+                });
+
+            modelBuilder.Entity("Pies.API.Entities.PieReviewStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ReviewStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PieReviewStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ReviewStatus = "Pending"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ReviewStatus = "Reviewed"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ReviewStatus = "Removed"
                         });
                 });
 

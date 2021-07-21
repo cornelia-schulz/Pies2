@@ -15,6 +15,7 @@ namespace Pies.API.DbContexts
         public DbSet<Pie> Pies { get; set; }
         public DbSet<PieFlavourType> PieFlavourTypes { get; set; }
         public DbSet<PieReviewStatus> PieReviewStatuses { get; set; }
+        public DbSet<PieReview> PieReviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -138,6 +139,28 @@ namespace Pies.API.DbContexts
                     ReviewStatus = "Removed"
                 }
                 );
+
+            modelBuilder.Entity<PieReview>().HasData(
+                new PieReview()
+                {
+                    Id = Guid.Parse("40ff5488-fdab-45c7-bc3a-14302d59869a"),
+                    PieId = Guid.Parse("5b1c2b4d-48c7-402a-80c3-cc796ad49c6b"),
+                    DateCreated = new DateTime(2020, 3, 2),
+                    UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
+                    Description = "What a great pie",
+                    Rating = 5
+                },
+                new PieReview()
+                {
+                    Id = Guid.Parse("40ff5488-fdab-45e7-bc3a-14302d59869a"),
+                    PieId = Guid.Parse("5b1c2b4d-48c7-402a-80c3-cc796ad49c6b"),
+                    DateCreated = new DateTime(2020, 7, 20),
+                    UserId = Guid.Parse("d8663e5e-7486-4f23-8739-6e0de1bea7ee"),
+                    Description = "Superb",
+                    Rating = 5
+                }
+                );
+
            base.OnModelCreating(modelBuilder);
         }
     }

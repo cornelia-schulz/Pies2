@@ -3,10 +3,52 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Pies.API.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class Initial_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "PieFlavourTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FlavourType = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PieFlavourTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PieReviews",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PieId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Rating = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PieReviews", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PieReviewStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ReviewStatus = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PieReviewStatuses", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "PieTypes",
                 columns: table => new
@@ -43,6 +85,35 @@ namespace Pies.API.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "PieFlavourTypes",
+                columns: new[] { "Id", "FlavourType" },
+                values: new object[,]
+                {
+                    { 1, "Gourmet" },
+                    { 2, "Sweet" },
+                    { 3, "Savoury" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PieReviewStatuses",
+                columns: new[] { "Id", "ReviewStatus" },
+                values: new object[,]
+                {
+                    { 1, "Pending" },
+                    { 2, "Reviewed" },
+                    { 3, "Removed" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PieReviews",
+                columns: new[] { "Id", "DateCreated", "Description", "PieId", "Rating", "UserId" },
+                values: new object[,]
+                {
+                    { new Guid("40ff5488-fdab-45c7-bc3a-14302d59869a"), new DateTimeOffset(new DateTime(2020, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 13, 0, 0, 0)), "What a great pie", new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"), 5, new Guid("d8663e5e-7486-4f81-8739-6e0de1bea7ee") },
+                    { new Guid("40ff5488-fdab-45e7-bc3a-14302d59869a"), new DateTimeOffset(new DateTime(2020, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 12, 0, 0, 0)), "Superb", new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"), 5, new Guid("d8663e5e-7486-4f23-8739-6e0de1bea7ee") }
+                });
+
+            migrationBuilder.InsertData(
                 table: "PieTypes",
                 columns: new[] { "Id", "FlavourTypeId", "Name" },
                 values: new object[,]
@@ -75,6 +146,15 @@ namespace Pies.API.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "PieFlavourTypes");
+
+            migrationBuilder.DropTable(
+                name: "PieReviews");
+
+            migrationBuilder.DropTable(
+                name: "PieReviewStatuses");
+
             migrationBuilder.DropTable(
                 name: "Pies");
 

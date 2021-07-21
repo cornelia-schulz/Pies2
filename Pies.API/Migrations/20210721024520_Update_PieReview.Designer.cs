@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pies.API.DbContexts;
 
 namespace Pies.API.Migrations
 {
     [DbContext(typeof(PiesContext))]
-    partial class PiesContextModelSnapshot : ModelSnapshot
+    [Migration("20210721024520_Update_PieReview")]
+    partial class Update_PieReview
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Pies.API.Entities
+namespace Pies.API.Models
 {
-    public class PieReview
+    public class PieReviewDto
     {
         public Guid Id { get; set; }
         public Guid PieId { get; set; }

@@ -4,19 +4,17 @@ using Pies.API.Models;
 using Pies.API.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Pies.API.Controllers
 {
     [ApiController]
-    [Route("api/v1/pies")]
-    public class PiesController : ControllerBase
+    [Route("api/v1/pies/{pieId}/piereviews")]
+    public class PieReviewsController : ControllerBase
     {
         private readonly IPiesRepository _piesRepository;
         private readonly IMapper _mapper;
 
-        public PiesController(IPiesRepository piesRepository,
+        public PieReviewsController(IPiesRepository piesRepository,
             IMapper mapper)
         {
             _piesRepository = piesRepository ?? throw new ArgumentNullException(nameof(piesRepository));
@@ -24,12 +22,15 @@ namespace Pies.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<PieDto>> GetPies()
+        public ActionResult<IEnumerable<PieReviewDto>> GetReviewsForPie(Guid pieId)
         {
-            var piesFromRepo = _piesRepository.GetPies();
-            var pies = new List<PieDto>();
+            if (!_piesRepository.PieExists(pieId))
+            {
+                return NotFound();
+            }
 
-            return Ok(_mapper.Map<IEnumerable<PieDto>>(piesFromRepo));
+            var reviewsForPiesFromRepo = _piesRepository.GetPieReviews(pieId);
+            return Ok(_mapper.Map<IEnumerable<PieReviewDto>>(reviewsForPiesFromRepo));
         }
     }
 }

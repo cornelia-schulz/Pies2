@@ -36,32 +36,20 @@ namespace Pies.API.Services
             _context.Pies.Remove(pie);
         }
   
-        public Pie GetPie(Guid pieTypeId, Guid pieId)
+        public Pie GetPie(Guid pieId)
         {
-            if (pieTypeId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(pieTypeId));
-            }
-
             if (pieId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(pieId));
             }
 
             return _context.Pies
-              .Where(c => c.PieTypeId == pieTypeId && c.Id == pieId).FirstOrDefault();
+              .Where(c => c.Id == pieId).FirstOrDefault();
         }
 
-        public IEnumerable<Pie> GetPies(Guid pieTypeId)
+        public IEnumerable<Pie> GetPies()
         {
-            if (pieTypeId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(pieTypeId));
-            }
-
-            return _context.Pies
-                        .Where(c => c.PieTypeId == pieTypeId)
-                        .OrderBy(c => c.Name).ToList();
+            return _context.Pies.ToList();
         }
 
         public void UpdatePie(Pie pie)
@@ -87,14 +75,14 @@ namespace Pies.API.Services
             _context.PieTypes.Add(pieType);
         }
 
-        public bool PieTypeExists(Guid pieTypeId)
+        public bool PieExists(Guid pieId)
         {
-            if (pieTypeId == Guid.Empty)
+            if (pieId == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(pieTypeId));
+                throw new ArgumentNullException(nameof(pieId));
             }
 
-            return _context.PieTypes.Any(a => a.Id == pieTypeId);
+            return _context.Pies.Any(a => a.Id == pieId);
         }
 
         public void DeletePieType(PieType pieType)
@@ -137,6 +125,34 @@ namespace Pies.API.Services
         public void UpdatePieType(PieType pieType)
         {
             // no code in this implementation
+        }
+
+        public IEnumerable<PieReview> GetPieReviews(Guid pieId)
+        {
+            if (pieId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(pieId));
+            }
+
+            return _context.PieReviews
+                        .Where(c => c.PieId == pieId)
+                        .OrderBy(c => c.DateCreated).ToList();
+        }
+
+        public PieReview GetPieReview(Guid pieId, Guid pieReviewId)
+        {
+            if (pieId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(pieId));
+            }
+
+            if (pieReviewId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(pieReviewId));
+            }
+
+            return _context.PieReviews
+              .Where(c => c.Id == pieReviewId && c.PieId == pieId).FirstOrDefault();
         }
 
         public bool Save()
