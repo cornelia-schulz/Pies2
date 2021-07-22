@@ -32,5 +32,23 @@ namespace Pies.API.Controllers
             var reviewsForPiesFromRepo = _piesRepository.GetPieReviews(pieId);
             return Ok(_mapper.Map<IEnumerable<PieReviewDto>>(reviewsForPiesFromRepo));
         }
+
+        [HttpGet("{pieReviewId}")]
+        public ActionResult<PieReviewDto> GetReviewForPie(Guid pieId, Guid pieReviewId)
+        {
+            if (!_piesRepository.PieExists(pieId))
+            {
+                return NotFound();
+            }
+
+            var reviewForPieFromRepo = _piesRepository.GetPieReview(pieId, pieReviewId);
+
+            if (reviewForPieFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<PieReviewDto>(reviewForPieFromRepo));
+        }
     }
 }

@@ -24,12 +24,26 @@ namespace Pies.API.Controllers
         }
 
         [HttpGet]
+        [HttpHead]
         public ActionResult<IEnumerable<PieDto>> GetPies()
         {
             var piesFromRepo = _piesRepository.GetPies();
             var pies = new List<PieDto>();
 
             return Ok(_mapper.Map<IEnumerable<PieDto>>(piesFromRepo));
+        }
+
+        [HttpGet("{pieId}")]
+        public IActionResult GetPie(Guid pieId)
+        {
+            var pieFromRepo = _piesRepository.GetPie(pieId);
+
+            if (pieFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<PieDto>(pieFromRepo));
         }
     }
 }
