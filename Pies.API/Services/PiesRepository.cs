@@ -49,7 +49,34 @@ namespace Pies.API.Services
 
         public IEnumerable<Pie> GetPies()
         {
-            return _context.Pies.ToList();
+            return _context.Pies.ToList<Pie>();
+        }
+
+        // get pies and filter by query string and/or search by searchString
+        public IEnumerable<Pie> GetPies(string name, string searchQuery)
+        {
+            // if no query string or search string have been passed, return the full list of pies
+            if (string.IsNullOrWhiteSpace(name)
+                && string.IsNullOrWhiteSpace(searchQuery))
+            {
+                return GetPies();
+            }
+
+            var collection = _context.Pies as IQueryable<Pie>;
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                name = name.Trim();
+                collection = collection.Where(a => a.Name == name);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.Trim();
+                collection = collection.Where(a => a.Name.Contains(searchQuery));
+            }
+
+            return collection.ToList();
         }
 
         public void UpdatePie(Pie pie)

@@ -25,9 +25,10 @@ namespace Pies.API.Controllers
 
         [HttpGet]
         [HttpHead]
-        public ActionResult<IEnumerable<PieDto>> GetPies()
+        // get pies and if query string is passed in then filter by query string
+        public ActionResult<IEnumerable<PieDto>> GetPies([FromQuery] string name, string searchQuery)
         {
-            var piesFromRepo = _piesRepository.GetPies();
+            var piesFromRepo = _piesRepository.GetPies(name, searchQuery);
             var pies = new List<PieDto>();
 
             return Ok(_mapper.Map<IEnumerable<PieDto>>(piesFromRepo));
