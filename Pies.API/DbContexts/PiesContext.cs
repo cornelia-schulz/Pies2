@@ -72,7 +72,7 @@ namespace Pies.API.DbContexts
                    PieTypeId = Guid.Parse("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
                    DateCreated = new DateTime(2020, 7, 23),
                    Name = "Mushroom Pie",
-                   UserId = 1,
+                   UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
                    ShopId = 1
                },
                new Pie
@@ -81,7 +81,7 @@ namespace Pies.API.DbContexts
                    PieTypeId = Guid.Parse("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
                    DateCreated = new DateTime(2021, 8, 23),
                    Name = "Butter Chicken Pie",
-                   UserId = 1,
+                   UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
                    ShopId = 1
                },
                new Pie
@@ -90,7 +90,7 @@ namespace Pies.API.DbContexts
                    PieTypeId = Guid.Parse("da2fd609-d754-4feb-8acd-c4f9ff13ba96"),
                    DateCreated = new DateTime(2019, 9, 26),
                    Name = "Steak Pie",
-                   UserId = 1,
+                   UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
                    ShopId = 1
                },
                new Pie
@@ -99,7 +99,7 @@ namespace Pies.API.DbContexts
                    PieTypeId = Guid.Parse("2902b665-1190-4c70-9915-b9c2d7680450"),
                    DateCreated = new DateTime(2020, 3, 2),
                    Name = "Apple Pie",
-                   UserId = 1,
+                   UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
                    ShopId = 2
                }
                );

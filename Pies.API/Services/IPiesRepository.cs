@@ -10,7 +10,7 @@ namespace Pies.API.Services
         IEnumerable<Pie> GetPies();
         IEnumerable<Pie> GetPies(PiesResourceParameters piesResourceParameters);
         Pie GetPie(Guid pieId);
-        void AddPie(Guid pieTypeId, Pie pie);
+        void AddPie(Pie pie);
         void UpdatePie(Pie pie);
         void DeletePie(Pie pie);
         IEnumerable<PieType> GetPieTypes();
@@ -22,6 +22,7 @@ namespace Pies.API.Services
         bool PieExists(Guid pieTypeId);
         IEnumerable<PieReview> GetPieReviews(Guid pieId);
         PieReview GetPieReview(Guid pieId, Guid pieReviewId);
+        void AddPieReview(Guid pieId, PieReview pieReview);
         bool Save();
     }
 }

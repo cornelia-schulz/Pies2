@@ -33,7 +33,7 @@ namespace Pies.API.Controllers
             return Ok(_mapper.Map<IEnumerable<PieReviewDto>>(reviewsForPiesFromRepo));
         }
 
-        [HttpGet("{pieReviewId}")]
+        [HttpGet("{pieReviewId}", Name="GetPieReviewForPie")]
         public ActionResult<PieReviewDto> GetReviewForPie(Guid pieId, Guid pieReviewId)
         {
             if (!_piesRepository.PieExists(pieId))
@@ -50,5 +50,23 @@ namespace Pies.API.Controllers
 
             return Ok(_mapper.Map<PieReviewDto>(reviewForPieFromRepo));
         }
+
+        [HttpPost]
+        public ActionResult<PieReviewDto> CreatePieReviewForPie(Guid pieId, PieReviewForCreationDto pieReview)
+        {
+            if (!_piesRepository.PieExists(pieId))
+            {
+                return NotFound();
+            }
+
+            var pieReviewEntity = _mapper.Map<Entities.PieReview>(pieReview);
+            _piesRepository.AddPieReview(pieId, pieReviewEntity);
+            _piesRepository.Save();
+
+            var pieReviewToReturn = _mapper.Map<PieReviewDto>(pieReviewEntity);
+            return CreatedAtRoute("GetPieReviewForPie",
+                new { pieId = pieId, pieReviewId = pieReviewToReturn.Id }, pieReviewToReturn);
+        }
+
     }
 }

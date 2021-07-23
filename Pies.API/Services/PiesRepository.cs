@@ -16,19 +16,12 @@ namespace Pies.API.Services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public void AddPie(Guid pieTypeId, Pie pie)
+        public void AddPie(Pie pie)
         {
-            if (pieTypeId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(pieTypeId));
-            }
-
             if (pie == null)
             {
                 throw new ArgumentNullException(nameof(pie));
             }
-            // always set the PieTypeId to the passed-in pieTypeId
-            pie.PieTypeId = pieTypeId;
             _context.Pies.Add(pie); 
         }         
 
@@ -186,6 +179,23 @@ namespace Pies.API.Services
 
             return _context.PieReviews
               .Where(c => c.Id == pieReviewId && c.PieId == pieId).FirstOrDefault();
+        }
+
+        public void AddPieReview(Guid pieId, PieReview pieReview)
+        {
+            if (pieId == null)
+            {
+                throw new ArgumentNullException(nameof(pieId));
+            }
+
+            if (pieReview == null)
+            {
+                throw new ArgumentNullException(nameof(pieReview));
+            }
+
+            // set the pieId to the passed in pie Id
+            pieReview.PieId = pieId;
+            _context.PieReviews.Add(pieReview);
         }
 
         public bool Save()

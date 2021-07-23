@@ -5,8 +5,6 @@ using Pies.API.ResourceParameters;
 using Pies.API.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Pies.API.Controllers
 {
@@ -35,7 +33,7 @@ namespace Pies.API.Controllers
             return Ok(_mapper.Map<IEnumerable<PieDto>>(piesFromRepo));
         }
 
-        [HttpGet("{pieId}")]
+        [HttpGet("{pieId}", Name="GetPie")]
         public IActionResult GetPie(Guid pieId)
         {
             var pieFromRepo = _piesRepository.GetPie(pieId);
@@ -46,6 +44,19 @@ namespace Pies.API.Controllers
             }
 
             return Ok(_mapper.Map<PieDto>(pieFromRepo));
+        }
+
+        [HttpPost]
+        public ActionResult<PieDto> CreatePie(PieForCreationDto pie)
+        {
+            var pieEntity = _mapper.Map<Entities.Pie>(pie);
+            _piesRepository.AddPie(pieEntity);
+            _piesRepository.Save();
+
+            var pieToReturn = _mapper.Map<PieDto>(pieEntity);
+            return CreatedAtRoute("GetPie",
+                new { pieId = pieToReturn.Id },
+                pieToReturn);
         }
     }
 }
