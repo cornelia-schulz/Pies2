@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Pies.API.Models;
+using Pies.API.ResourceParameters;
 using Pies.API.Services;
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,9 @@ namespace Pies.API.Controllers
         [HttpGet]
         [HttpHead]
         // get pies and if query string is passed in then filter by query string
-        public ActionResult<IEnumerable<PieDto>> GetPies([FromQuery] string name, string searchQuery)
+        public ActionResult<IEnumerable<PieDto>> GetPies([FromQuery] PiesResourceParameters piesResourceParameters)
         {
-            var piesFromRepo = _piesRepository.GetPies(name, searchQuery);
+            var piesFromRepo = _piesRepository.GetPies(piesResourceParameters);
             var pies = new List<PieDto>();
 
             return Ok(_mapper.Map<IEnumerable<PieDto>>(piesFromRepo));
