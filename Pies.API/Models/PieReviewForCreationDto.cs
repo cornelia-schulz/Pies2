@@ -7,7 +7,6 @@ namespace Pies.API.Models
 {
     public class PieReviewForCreationDto
     {
-      
         public DateTimeOffset DateCreated { get; set; }
         public Guid UserId { get; set; }
         public string Description { get; set; }

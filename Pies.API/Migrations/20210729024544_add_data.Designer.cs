@@ -10,8 +10,8 @@ using Pies.API.DbContexts;
 namespace Pies.API.Migrations
 {
     [DbContext(typeof(PiesContext))]
-    [Migration("20210723071428_update_user_id")]
-    partial class update_user_id
+    [Migration("20210729024544_add_data")]
+    partial class add_data
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -144,6 +144,8 @@ namespace Pies.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PieId");
+
                     b.ToTable("PieReviews");
 
                     b.HasData(
@@ -271,6 +273,20 @@ namespace Pies.API.Migrations
                         .IsRequired();
 
                     b.Navigation("PieType");
+                });
+
+            modelBuilder.Entity("Pies.API.Entities.PieReview", b =>
+                {
+                    b.HasOne("Pies.API.Entities.Pie", null)
+                        .WithMany("PieReviews")
+                        .HasForeignKey("PieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Pies.API.Entities.Pie", b =>
+                {
+                    b.Navigation("PieReviews");
                 });
 #pragma warning restore 612, 618
         }

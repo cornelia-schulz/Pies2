@@ -23,6 +23,7 @@ namespace Pies.API
                     var context = scope.ServiceProvider.GetService<PiesContext>();
                     // for demo purposes, delete the database & migrate on startup so 
                     // we can start with a clean slate
+                    Console.WriteLine("deleting database");
                     context.Database.EnsureDeleted();
                     context.Database.Migrate();
                 }

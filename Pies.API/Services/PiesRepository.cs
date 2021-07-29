@@ -11,7 +11,7 @@ namespace Pies.API.Services
     {
         private readonly PiesContext _context;
 
-        public PiesRepository(PiesContext context )
+        public PiesRepository(PiesContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -22,6 +22,14 @@ namespace Pies.API.Services
             {
                 throw new ArgumentNullException(nameof(pie));
             }
+
+            pie.Id = Guid.NewGuid();
+
+            foreach (var pieReview in pie.PieReviews)
+            {
+                pieReview.Id = Guid.NewGuid();
+            }
+
             _context.Pies.Add(pie); 
         }         
 
@@ -92,11 +100,6 @@ namespace Pies.API.Services
 
             // the repository fills the id (instead of using identity columns)
             pieType.Id = Guid.NewGuid();
-
-            //foreach (var pie in author.Courses)
-            //{
-            //    course.Id = Guid.NewGuid();
-            //}
 
             _context.PieTypes.Add(pieType);
         }
