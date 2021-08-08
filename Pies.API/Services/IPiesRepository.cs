@@ -9,6 +9,7 @@ namespace Pies.API.Services
     {    
         IEnumerable<Pie> GetPies();
         IEnumerable<Pie> GetPies(PiesResourceParameters piesResourceParameters);
+        IEnumerable<Pie> GetPies(IEnumerable<Guid> pieIds);
         Pie GetPie(Guid pieId);
         void AddPie(Pie pie);
         void UpdatePie(Pie pie);

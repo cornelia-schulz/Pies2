@@ -51,7 +51,7 @@ namespace Pies.API.Services
 
         public IEnumerable<Pie> GetPies()
         {
-            return _context.Pies.ToList<Pie>();
+            return _context.Pies.ToList();
         }
 
         // get pies and filter by query string and/or search by searchString
@@ -84,6 +84,18 @@ namespace Pies.API.Services
             }
 
             return collection.ToList();
+        }
+
+        public IEnumerable<Pie> GetPies(IEnumerable<Guid> pieIds)
+        {
+            if (pieIds == null)
+            {
+                throw new ArgumentNullException(nameof(pieIds));
+            }
+
+            return _context.Pies.Where(a => pieIds.Contains(a.Id))
+                .OrderBy(a => a.Name)
+                .ToList();
         }
 
         public void UpdatePie(Pie pie)
