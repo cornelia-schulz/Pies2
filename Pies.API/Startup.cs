@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +29,52 @@ namespace Pies.API
             services.AddControllers(setupAction =>
             {
                 setupAction.ReturnHttpNotAcceptable = true;
-            }).AddXmlDataContractSerializerFormatters();
+            }).AddXmlDataContractSerializerFormatters()
+            .ConfigureApiBehaviorOptions(setupAction =>
+            {
+                setupAction.InvalidModelStateResponseFactory = context =>
+                {
+                    // create a problem details object
+                    var problemDetailsFactory = context.HttpContext.RequestServices
+                    .GetRequiredService<ProblemDetailsFactory>();
+                    var problemDetails = problemDetailsFactory.CreateValidationProblemDetails(
+                        context.HttpContext,
+                        context.ModelState);
+
+                    // add additional information that isn't there by default
+                    problemDetails.Detail = "See the errors field for details.";
+                    problemDetails.Instance = context.HttpContext.Request.Path;
+
+                    // find out which status code to use
+                    var actionExecutingContext =
+                        context as Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext;
+
+                    // if there are modelstate errors & all arguments were correctly
+                    // found or parsed, there are validation errors
+                    if ((context.ModelState.ErrorCount > 0) &&
+                        (actionExecutingContext?.ActionArguments.Count ==
+                        context.ActionDescriptor.Parameters.Count))
+                    {
+                        problemDetails.Type = "https//courselibrary.com/modelvalidationproblem";
+                        problemDetails.Status = StatusCodes.Status422UnprocessableEntity;
+                        problemDetails.Title = "One or more validation errors occurred";
+
+                        return new UnprocessableEntityObjectResult(problemDetails)
+                        {
+                            ContentTypes = { "application/problem+json" }
+                        };
+                    };
+
+                    // if one of the arguments wasn't correctly found / couldn't be parsed
+                    // this is null/unparsable input
+                    problemDetails.Status = StatusCodes.Status400BadRequest;
+                    problemDetails.Title = "One or more errors occurred on input";
+                    return new BadRequestObjectResult(problemDetails)
+                    {
+                        ContentTypes = { "application/problem+json" }
+                    };
+                };
+            });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
