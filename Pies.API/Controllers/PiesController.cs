@@ -58,5 +58,12 @@ namespace Pies.API.Controllers
                 new { pieId = pieToReturn.Id },
                 pieToReturn);
         }
+
+        [HttpOptions]
+        public IActionResult GetPiesOptions()
+        {
+            Response.Headers.Add("Allow", "GET, OPTIONS, POST");
+            return Ok();
+        }
     }
 }
