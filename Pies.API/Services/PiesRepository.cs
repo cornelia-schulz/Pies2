@@ -213,6 +213,12 @@ namespace Pies.API.Services
             _context.PieReviews.Add(pieReview);
         }
 
+        public void UpdatePieReview(PieReview pieReview)
+        {
+            // no code in this implementation
+            // save method in controller already implements the changes
+        }
+
         public bool Save()
         {
             return (_context.SaveChanges() >= 0);

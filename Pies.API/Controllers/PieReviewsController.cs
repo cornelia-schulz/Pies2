@@ -68,5 +68,42 @@ namespace Pies.API.Controllers
                 new { pieId = pieId, pieReviewId = pieReviewToReturn.Id }, pieReviewToReturn);
         }
 
+        [HttpPut("{pieReviewId}")]
+        public IActionResult UpdatePieReviewForPie(Guid pieId,
+            Guid pieReviewId,
+            PieReviewForUpdateDto pieReview)
+        {
+            if (!_piesRepository.PieExists(pieId))
+            {
+                return NotFound();
+            }
+
+            var reviewForPieFromRepo = _piesRepository.GetPieReview(pieId, pieReviewId);
+
+            if (reviewForPieFromRepo == null)
+            {
+                var pieReviewToAdd = _mapper.Map<Entities.PieReview>(pieReview);
+                pieReviewToAdd.Id = pieReviewId;
+
+                _piesRepository.AddPieReview(pieId, pieReviewToAdd);
+
+                _piesRepository.Save();
+
+                var pieReviewToReturn = _mapper.Map<PieReviewDto>(pieReviewToAdd);
+
+                return CreatedAtRoute("GetPieReviewForPie",
+                    new { pieId, pieReviewId = pieReviewToReturn.Id },
+                    pieReviewToReturn);
+            }
+
+            _mapper.Map(pieReview, reviewForPieFromRepo);
+
+            _piesRepository.UpdatePieReview(reviewForPieFromRepo);
+
+            _piesRepository.Save();
+
+            return NoContent();
+        }
+
     }
 }

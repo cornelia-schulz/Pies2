@@ -8,11 +8,11 @@ namespace Pies.API.ValidationAttributes
         protected override ValidationResult IsValid(object value, 
             ValidationContext validationContext)
         {
-            var review = (PieReviewForCreationDto)validationContext.ObjectInstance;
+            var review = (PieReviewForManipulationDto)validationContext.ObjectInstance;
             if (review.Rating > 5 || review.Rating < 1)
             {
                  return new ValidationResult(ErrorMessage,
-                    new[] { "PieReviewForCreationDto" });
+                    new[] { "PieReviewForManipulationDto" });
             }
 
             return ValidationResult.Success;

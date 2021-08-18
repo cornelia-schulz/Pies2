@@ -8,6 +8,7 @@ namespace Pies.API.Profiles
         {
             CreateMap<Entities.PieReview, Models.PieReviewDto>();
             CreateMap<Models.PieReviewForCreationDto, Entities.PieReview>();
+            CreateMap<Models.PieReviewForUpdateDto, Entities.PieReview>();
         }
     }
 }

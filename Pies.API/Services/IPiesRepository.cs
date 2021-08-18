@@ -24,6 +24,7 @@ namespace Pies.API.Services
         IEnumerable<PieReview> GetPieReviews(Guid pieId);
         PieReview GetPieReview(Guid pieId, Guid pieReviewId);
         void AddPieReview(Guid pieId, PieReview pieReview);
+        void UpdatePieReview(PieReview pieReview);
         bool Save();
     }
 }
