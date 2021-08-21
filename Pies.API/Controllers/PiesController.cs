@@ -65,5 +65,21 @@ namespace Pies.API.Controllers
             Response.Headers.Add("Allow", "GET, OPTIONS, POST");
             return Ok();
         }
+
+        [HttpDelete("{pieId}")]
+        public ActionResult DeletePie(Guid pieId)
+        {
+            var pieFromRepo = _piesRepository.GetPie(pieId);
+
+            if (pieFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            _piesRepository.DeletePie(pieFromRepo);
+            _piesRepository.Save();
+
+            return NoContent();
+        }
     }
 }

@@ -25,6 +25,7 @@ namespace Pies.API.Services
         PieReview GetPieReview(Guid pieId, Guid pieReviewId);
         void AddPieReview(Guid pieId, PieReview pieReview);
         void UpdatePieReview(PieReview pieReview);
+        void DeletePieReview(PieReview pieReview);
         bool Save();
     }
 }

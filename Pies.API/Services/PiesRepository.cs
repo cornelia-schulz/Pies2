@@ -219,6 +219,11 @@ namespace Pies.API.Services
             // save method in controller already implements the changes
         }
 
+        public void DeletePieReview(PieReview pieReview)
+        {
+            _context.PieReviews.Remove(pieReview);
+        }
+
         public bool Save()
         {
             return (_context.SaveChanges() >= 0);

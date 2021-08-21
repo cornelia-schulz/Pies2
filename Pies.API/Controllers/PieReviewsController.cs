@@ -125,7 +125,13 @@ namespace Pies.API.Controllers
             if (reviewForPieFromRepo == null)
             {
                 var pieReviewDto = new PieReviewForUpdateDto();
-                patchDocument.ApplyTo(pieReviewDto);
+                patchDocument.ApplyTo(pieReviewDto, ModelState);
+
+                if (!TryValidateModel(pieReviewDto))
+                {
+                    return ValidationProblem(ModelState);
+                }
+
                 var pieReviewToAdd = _mapper.Map<Entities.PieReview>(pieReviewDto);
                 pieReviewToAdd.Id = pieReviewId;
 
@@ -151,6 +157,27 @@ namespace Pies.API.Controllers
 
             _piesRepository.UpdatePieReview(reviewForPieFromRepo);
 
+            _piesRepository.Save();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{pieReviewId}")]
+        public ActionResult DeletePieReviewForPie(Guid pieId, Guid pieReviewId)
+        {
+            if (!_piesRepository.PieExists(pieId))
+            {
+                return NotFound();
+            }
+
+            var reviewForPieFromRepo = _piesRepository.GetPieReview(pieId, pieReviewId);
+
+            if (reviewForPieFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            _piesRepository.DeletePieReview(reviewForPieFromRepo);
             _piesRepository.Save();
 
             return NoContent();
