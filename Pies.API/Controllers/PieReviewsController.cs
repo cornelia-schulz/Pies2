@@ -1,5 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Pies.API.Models;
 using Pies.API.Services;
 using System;
@@ -105,5 +110,58 @@ namespace Pies.API.Controllers
             return NoContent();
         }
 
+        [HttpPatch("{pieReviewId}")]
+        public ActionResult PartiallyUpdatePieReviewForPie(Guid pieId,
+            Guid pieReviewId,
+            JsonPatchDocument<PieReviewForUpdateDto> patchDocument)
+        {
+            if (!_piesRepository.PieExists(pieId))
+            {
+                return NotFound();
+            }
+
+            var reviewForPieFromRepo = _piesRepository.GetPieReview(pieId, pieReviewId);
+
+            if (reviewForPieFromRepo == null)
+            {
+                var pieReviewDto = new PieReviewForUpdateDto();
+                patchDocument.ApplyTo(pieReviewDto);
+                var pieReviewToAdd = _mapper.Map<Entities.PieReview>(pieReviewDto);
+                pieReviewToAdd.Id = pieReviewId;
+
+                _piesRepository.AddPieReview(pieId, pieReviewToAdd);
+                _piesRepository.Save();
+
+                var pieReviewToReturn = _mapper.Map<PieReviewDto>(pieReviewToAdd);
+
+                return CreatedAtRoute("GetPieReviewForPie",
+                    new { pieId, pieReviewId = pieReviewToReturn.Id },
+                    pieReviewToReturn);
+            }
+
+            var pieReviewToPatch = _mapper.Map<PieReviewForUpdateDto>(reviewForPieFromRepo);
+            patchDocument.ApplyTo(pieReviewToPatch, ModelState);
+
+            if (!TryValidateModel(pieReviewToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            _mapper.Map(pieReviewToPatch, reviewForPieFromRepo);
+
+            _piesRepository.UpdatePieReview(reviewForPieFromRepo);
+
+            _piesRepository.Save();
+
+            return NoContent();
+        }
+
+        public override ActionResult ValidationProblem(
+            [ActionResultObjectValue] ModelStateDictionary modelStateDictionary)
+        {
+            var options = HttpContext.RequestServices
+                .GetRequiredService<IOptions<ApiBehaviorOptions>>();
+            return (ActionResult)options.Value.InvalidModelStateResponseFactory(ControllerContext);
+        }
     }
 }
