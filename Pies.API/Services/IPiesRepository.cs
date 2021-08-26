@@ -1,4 +1,5 @@
 ﻿using Pies.API.Entities;
+using Pies.API.Helpers;
 using Pies.API.ResourceParameters;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace Pies.API.Services
     public interface IPiesRepository
     {    
         IEnumerable<Pie> GetPies();
-        IEnumerable<Pie> GetPies(PiesResourceParameters piesResourceParameters);
+        PagedList<Pie> GetPies(PiesResourceParameters piesResourceParameters);
         IEnumerable<Pie> GetPies(IEnumerable<Guid> pieIds);
         Pie GetPie(Guid pieId);
         void AddPie(Pie pie);

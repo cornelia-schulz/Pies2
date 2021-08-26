@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Pies.API.Helpers;
 using Pies.API.Models;
 using Pies.API.ResourceParameters;
 using Pies.API.Services;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace Pies.API.Controllers
 {
@@ -22,13 +24,32 @@ namespace Pies.API.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetPies")]
         [HttpHead]
         // get pies and if query string is passed in then filter by query string
         public ActionResult<IEnumerable<PieDto>> GetPies([FromQuery] PiesResourceParameters piesResourceParameters)
         {
             var piesFromRepo = _piesRepository.GetPies(piesResourceParameters);
-            var pies = new List<PieDto>();
+            var previousPageLink = piesFromRepo.HasPrevious ?
+                CreatePiesResourceUri(piesResourceParameters,
+                ResourceUriType.PreviousPage) : null;
+
+            var nextPageLink = piesFromRepo.HasNext ?
+                CreatePiesResourceUri(piesResourceParameters,
+                ResourceUriType.NextPage) : null;
+
+            var paginationMetadata = new
+            {
+                totalCount = piesFromRepo.TotalCount,
+                pageSize = piesFromRepo.PageSize,
+                currentPage = piesFromRepo.CurrentPage,
+                totalPages = piesFromRepo.TotalPages,
+                previousPageLink,
+                nextPageLink
+            };
+
+            Response.Headers.Add("X-Pagination",
+                JsonSerializer.Serialize(paginationMetadata));
 
             return Ok(_mapper.Map<IEnumerable<PieDto>>(piesFromRepo));
         }
@@ -80,6 +101,43 @@ namespace Pies.API.Controllers
             _piesRepository.Save();
 
             return NoContent();
+        }
+
+
+        private string CreatePiesResourceUri(
+            PiesResourceParameters piesResourceParameters,
+            ResourceUriType type)
+        {
+            switch (type)
+            {
+                case ResourceUriType.PreviousPage:
+                    return Url.Link("GetPies",
+                       new
+                       {
+                           pageNumber = piesResourceParameters.PageNumber - 1,
+                           pageSize = piesResourceParameters.PageSize,
+                           name = piesResourceParameters.Name,
+                           searchQuery = piesResourceParameters.SearchQuery
+                       });
+                case ResourceUriType.NextPage:
+                    return Url.Link("GetPies",
+                        new
+                        {
+                            pageNumber = piesResourceParameters.PageNumber + 1,
+                            pageSize = piesResourceParameters.PageSize,
+                            name = piesResourceParameters.Name,
+                            searchQuery = piesResourceParameters.SearchQuery
+                        });
+                default:
+                    return Url.Link("GetPies",
+                        new
+                        {
+                            pageNumber = piesResourceParameters.PageNumber,
+                            pageSize = piesResourceParameters.PageSize,
+                            name = piesResourceParameters.Name,
+                            searchQuery = piesResourceParameters.SearchQuery
+                        });
+            }
         }
     }
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "SD5yHA4mGiKHJEMIuqowE8PVNGH6ZspInGR9dtuXSqQY+5atWHUvHgNz0xiPdYFrxeT9CTa0XlqKzxjhwTc0NQ==",
+  "dgSpecHash": "JIOWSvf4wPO6HBzrgWBnH0Q6kFpsb37NbMo6bgVwDCAPK+5Kml/X2AKiZuKX3d5n4BtILd1T5IkndsMQTSTwbA==",
   "success": true,
-  "projectFilePath": "C:\\Working\\courses\\Pies\\Pies.API\\Pies.API.csproj",
+  "projectFilePath": "C:\\Working\\courses\\pies\\Pies.API\\Pies.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\cschulz1\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\cschulz1\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

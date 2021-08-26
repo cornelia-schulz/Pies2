@@ -1,5 +1,6 @@
 ﻿using Pies.API.DbContexts;
 using Pies.API.Entities;
+using Pies.API.Helpers;
 using Pies.API.ResourceParameters;
 using System;
 using System.Collections.Generic;
@@ -55,18 +56,11 @@ namespace Pies.API.Services
         }
 
         // get pies and filter by query string and/or search by searchString
-        public IEnumerable<Pie> GetPies(PiesResourceParameters piesResourceParameters)
+        public PagedList<Pie> GetPies(PiesResourceParameters piesResourceParameters)
         {
             if (piesResourceParameters == null)
             {
                 throw new ArgumentNullException(nameof(piesResourceParameters));
-            }
-
-            // if no query string or search string have been passed, return the full list of pies
-            if (string.IsNullOrWhiteSpace(piesResourceParameters.Name)
-                && string.IsNullOrWhiteSpace(piesResourceParameters.SearchQuery))
-            {
-                return GetPies();
             }
 
             var collection = _context.Pies as IQueryable<Pie>;
@@ -83,7 +77,9 @@ namespace Pies.API.Services
                 collection = collection.Where(a => a.Name.Contains(searchQuery));
             }
 
-            return collection.ToList();
+            return PagedList<Pie>.Create(collection,
+                piesResourceParameters.PageNumber,
+                piesResourceParameters.PageSize);
         }
 
         public IEnumerable<Pie> GetPies(IEnumerable<Guid> pieIds)

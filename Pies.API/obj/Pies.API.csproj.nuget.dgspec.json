@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Working\\courses\\Pies\\Pies.API\\Pies.API.csproj": {}
+    "C:\\Working\\courses\\pies\\Pies.API\\Pies.API.csproj": {}
   },
   "projects": {
-    "C:\\Working\\courses\\Pies\\Pies.API\\Pies.API.csproj": {
+    "C:\\Working\\courses\\pies\\Pies.API\\Pies.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Working\\courses\\Pies\\Pies.API\\Pies.API.csproj",
+        "projectUniqueName": "C:\\Working\\courses\\pies\\Pies.API\\Pies.API.csproj",
         "projectName": "Pies.API",
-        "projectPath": "C:\\Working\\courses\\Pies\\Pies.API\\Pies.API.csproj",
+        "projectPath": "C:\\Working\\courses\\pies\\Pies.API\\Pies.API.csproj",
         "packagesPath": "C:\\Users\\cschulz1\\.nuget\\packages\\",
-        "outputPath": "C:\\Working\\courses\\Pies\\Pies.API\\obj\\",
+        "outputPath": "C:\\Working\\courses\\pies\\Pies.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
