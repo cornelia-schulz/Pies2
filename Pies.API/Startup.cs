@@ -82,6 +82,9 @@ namespace Pies.API
                 };
             });
 
+            // register PropertyMappingService
+            services.AddTransient<IPropertyMappingService, PropertyMappingService>();
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IPiesRepository, PiesRepository>();

@@ -1,6 +1,7 @@
 ﻿using Pies.API.DbContexts;
 using Pies.API.Entities;
 using Pies.API.Helpers;
+using Pies.API.Models;
 using Pies.API.ResourceParameters;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,14 @@ namespace Pies.API.Services
     public class PiesRepository : IPiesRepository, IDisposable
     {
         private readonly PiesContext _context;
+        private readonly IPropertyMappingService _propertyMappingService;
 
-        public PiesRepository(PiesContext context)
+        public PiesRepository(PiesContext context,
+            IPropertyMappingService propertyMappingService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _propertyMappingService = propertyMappingService ??
+                throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         public void AddPie(Pie pie)
@@ -75,6 +80,14 @@ namespace Pies.API.Services
             {
                 var searchQuery = piesResourceParameters.SearchQuery.Trim();
                 collection = collection.Where(a => a.Name.Contains(searchQuery));
+            }
+
+            if (!string.IsNullOrWhiteSpace(piesResourceParameters.OrderBy))
+            {
+                // get property mapping dictionary
+                var piePropertyMappingDictionary =
+                    _propertyMappingService.GetPropertyMapping<PieDto, Pie>();
+                collection = collection.ApplySort(piesResourceParameters.OrderBy, piePropertyMappingDictionary);
             }
 
             return PagedList<Pie>.Create(collection,

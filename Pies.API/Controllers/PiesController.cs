@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Pies.API.Entities;
 using Pies.API.Helpers;
 using Pies.API.Models;
 using Pies.API.ResourceParameters;
@@ -16,12 +17,14 @@ namespace Pies.API.Controllers
     {
         private readonly IPiesRepository _piesRepository;
         private readonly IMapper _mapper;
+        private readonly IPropertyMappingService _propertyMappingService;
 
         public PiesController(IPiesRepository piesRepository,
-            IMapper mapper)
+            IMapper mapper, IPropertyMappingService propertyMappingService)
         {
             _piesRepository = piesRepository ?? throw new ArgumentNullException(nameof(piesRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         [HttpGet(Name = "GetPies")]
@@ -29,6 +32,11 @@ namespace Pies.API.Controllers
         // get pies and if query string is passed in then filter by query string
         public ActionResult<IEnumerable<PieDto>> GetPies([FromQuery] PiesResourceParameters piesResourceParameters)
         {
+            if (!_propertyMappingService.ValidMappingExistsFor<PieDto, Pie>(piesResourceParameters.OrderBy))
+            {
+                return BadRequest();
+            }
+
             var piesFromRepo = _piesRepository.GetPies(piesResourceParameters);
             var previousPageLink = piesFromRepo.HasPrevious ?
                 CreatePiesResourceUri(piesResourceParameters,
@@ -114,6 +122,7 @@ namespace Pies.API.Controllers
                     return Url.Link("GetPies",
                        new
                        {
+                           orderBy = piesResourceParameters.OrderBy,
                            pageNumber = piesResourceParameters.PageNumber - 1,
                            pageSize = piesResourceParameters.PageSize,
                            name = piesResourceParameters.Name,
@@ -123,6 +132,7 @@ namespace Pies.API.Controllers
                     return Url.Link("GetPies",
                         new
                         {
+                            orderBy = piesResourceParameters.OrderBy,
                             pageNumber = piesResourceParameters.PageNumber + 1,
                             pageSize = piesResourceParameters.PageSize,
                             name = piesResourceParameters.Name,
@@ -132,6 +142,7 @@ namespace Pies.API.Controllers
                     return Url.Link("GetPies",
                         new
                         {
+                            orderBy = piesResourceParameters.OrderBy,
                             pageNumber = piesResourceParameters.PageNumber,
                             pageSize = piesResourceParameters.PageSize,
                             name = piesResourceParameters.Name,

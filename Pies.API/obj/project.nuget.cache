@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "JIOWSvf4wPO6HBzrgWBnH0Q6kFpsb37NbMo6bgVwDCAPK+5Kml/X2AKiZuKX3d5n4BtILd1T5IkndsMQTSTwbA==",
+  "dgSpecHash": "W3C2pTzp4TpQ/Ya1UNs1WQj3aqQuz9Pdi4ST9sWsdop0kCp7Y9fTH1GB6Amsdpb3ymQegkVsHWXZe82kJHhKBQ==",
   "success": true,
-  "projectFilePath": "C:\\Working\\courses\\pies\\Pies.API\\Pies.API.csproj",
+  "projectFilePath": "C:\\Working\\courses\\Pies\\Pies.API\\Pies.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\cschulz1\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\cschulz1\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",
@@ -63,6 +63,7 @@
     "C:\\Users\\cschulz1\\.nuget\\packages\\system.io.filesystem\\4.3.0\\system.io.filesystem.4.3.0.nupkg.sha512",
     "C:\\Users\\cschulz1\\.nuget\\packages\\system.io.filesystem.primitives\\4.3.0\\system.io.filesystem.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\cschulz1\\.nuget\\packages\\system.linq\\4.3.0\\system.linq.4.3.0.nupkg.sha512",
+    "C:\\Users\\cschulz1\\.nuget\\packages\\system.linq.dynamic.core\\1.2.12\\system.linq.dynamic.core.1.2.12.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\system.net.nameresolution\\4.3.0\\system.net.nameresolution.4.3.0.nupkg.sha512",
     "C:\\Users\\cschulz1\\.nuget\\packages\\system.net.primitives\\4.3.0\\system.net.primitives.4.3.0.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\system.private.datacontractserialization\\4.3.0\\system.private.datacontractserialization.4.3.0.nupkg.sha512",
