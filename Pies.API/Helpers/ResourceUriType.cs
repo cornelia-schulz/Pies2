@@ -8,6 +8,7 @@ namespace Pies.API.Helpers
     public enum ResourceUriType
     {
         PreviousPage,
+        Current,
         NextPage
     }
 }

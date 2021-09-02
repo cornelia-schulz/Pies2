@@ -7,6 +7,7 @@ using Pies.API.ResourceParameters;
 using Pies.API.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 
 namespace Pies.API.Controllers
@@ -38,29 +39,40 @@ namespace Pies.API.Controllers
             }
 
             var piesFromRepo = _piesRepository.GetPies(piesResourceParameters);
-            var previousPageLink = piesFromRepo.HasPrevious ?
-                CreatePiesResourceUri(piesResourceParameters,
-                ResourceUriType.PreviousPage) : null;
-
-            var nextPageLink = piesFromRepo.HasNext ?
-                CreatePiesResourceUri(piesResourceParameters,
-                ResourceUriType.NextPage) : null;
 
             var paginationMetadata = new
             {
                 totalCount = piesFromRepo.TotalCount,
                 pageSize = piesFromRepo.PageSize,
                 currentPage = piesFromRepo.CurrentPage,
-                totalPages = piesFromRepo.TotalPages,
-                previousPageLink,
-                nextPageLink
+                totalPages = piesFromRepo.TotalPages
             };
 
             Response.Headers.Add("X-Pagination",
                 JsonSerializer.Serialize(paginationMetadata));
 
-            return Ok(_mapper.Map<IEnumerable<PieDto>>(piesFromRepo)
-                .ShapeData(piesResourceParameters.Fields));
+            var links = CreateLinksForPies(piesResourceParameters,
+                piesFromRepo.HasNext,
+                piesFromRepo.HasPrevious);
+
+            var shapedPies = _mapper.Map<IEnumerable<PieDto>>(piesFromRepo)
+                .ShapeData(piesResourceParameters.Fields);
+
+            var shapedPiesWithLinks = shapedPies.Select(pie =>
+            {
+                var pieAsDictionary = pie as IDictionary<string, object>;
+                var pieLinks = CreateLinksForPie((Guid)pieAsDictionary["Id"], null);
+                pieAsDictionary.Add("links", pieLinks);
+                return pieAsDictionary;
+            });
+
+            var linkedCollectionResource = new
+            {
+                value = shapedPiesWithLinks,
+                links
+            };
+
+            return Ok(linkedCollectionResource);
         }
 
         [HttpGet("{pieId}", Name="GetPie")]
@@ -73,10 +85,17 @@ namespace Pies.API.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<PieDto>(pieFromRepo).ShapeData(fields));
+            var links = CreateLinksForPie(pieId, fields);
+            var linkedResourceToReturn =
+                _mapper.Map<PieDto>(pieFromRepo).ShapeData(fields)
+                as IDictionary<string, object>;
+
+            linkedResourceToReturn.Add("links", links);
+
+            return Ok(linkedResourceToReturn);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "CreatePie")]
         public ActionResult<PieDto> CreatePie(PieForCreationDto pie)
         {
             var pieEntity = _mapper.Map<Entities.Pie>(pie);
@@ -84,9 +103,15 @@ namespace Pies.API.Controllers
             _piesRepository.Save();
 
             var pieToReturn = _mapper.Map<PieDto>(pieEntity);
+
+            var links = CreateLinksForPie(pieToReturn.Id, null);
+            var linkedResourcesToReturn = pieToReturn.ShapeData(null)
+                as IDictionary<string, object>;
+            linkedResourcesToReturn.Add("links", links);
+
             return CreatedAtRoute("GetPie",
-                new { pieId = pieToReturn.Id },
-                pieToReturn);
+                new { pieId = linkedResourcesToReturn["Id"] },
+                linkedResourcesToReturn);
         }
 
         [HttpOptions]
@@ -96,7 +121,7 @@ namespace Pies.API.Controllers
             return Ok();
         }
 
-        [HttpDelete("{pieId}")]
+        [HttpDelete("{pieId}", Name = "DeletePie")]
         public ActionResult DeletePie(Guid pieId)
         {
             var pieFromRepo = _piesRepository.GetPie(pieId);
@@ -141,6 +166,7 @@ namespace Pies.API.Controllers
                             name = piesResourceParameters.Name,
                             searchQuery = piesResourceParameters.SearchQuery
                         });
+                case ResourceUriType.Current:
                 default:
                     return Url.Link("GetPies",
                         new
@@ -153,6 +179,75 @@ namespace Pies.API.Controllers
                             searchQuery = piesResourceParameters.SearchQuery
                         });
             }
+        }
+
+        private IEnumerable<LinkDto> CreateLinksForPie(Guid pieId, string fields)
+        {
+            var links = new List<LinkDto>();
+
+            if (string.IsNullOrWhiteSpace(fields))
+            {
+                links.Add(
+                    new LinkDto(Url.Link("GetPie", new { pieId }),
+                    "self",
+                    "GET"));
+            }
+            else
+            {
+                links.Add(
+                    new LinkDto(Url.Link("GetPie", new { pieId, fields }),
+                    "self",
+                    "GET"));
+            }
+
+            links.Add(
+                new LinkDto(Url.Link("DeletePie", new { pieId }),
+                "delete_pie",
+                "DELETE"));
+
+            links.Add(
+                new LinkDto(Url.Link("CreatePieReviewForPie", new { pieId }),
+                "create_pie_review_for_pie",
+                "POST"));
+
+            links.Add(
+                new LinkDto(Url.Link("GetPieReviewsForPie", new { pieId }),
+                "pie_reviews",
+                "GET"));
+
+            return links;
+        }
+
+        private IEnumerable<LinkDto> CreateLinksForPies(
+            PiesResourceParameters piesResourceParameters,
+            bool hasNext, bool hasPrevious)
+        {
+            var links = new List<LinkDto>();
+
+            links.Add(
+                new LinkDto(CreatePiesResourceUri(piesResourceParameters, ResourceUriType.Current),
+                "self",
+                "GET"));
+
+            if (hasNext)
+            {
+                links.Add(
+                    new LinkDto(CreatePiesResourceUri(
+                        piesResourceParameters, ResourceUriType.NextPage),
+                        "nextPage",
+                        "GET"));
+            }
+
+            if (hasPrevious)
+            {
+                links.Add(
+                    new LinkDto(CreatePiesResourceUri(
+                        piesResourceParameters, ResourceUriType.PreviousPage),
+                        "previousPage",
+                        "GET"));
+            }
+
+            return links;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Pies.API.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetPieReviewsForPie")]
         public ActionResult<IEnumerable<PieReviewDto>> GetReviewsForPie(Guid pieId)
         {
             if (!_piesRepository.PieExists(pieId))
@@ -56,7 +56,7 @@ namespace Pies.API.Controllers
             return Ok(_mapper.Map<PieReviewDto>(reviewForPieFromRepo));
         }
 
-        [HttpPost]
+        [HttpPost(Name = "CreatePieReviewForPie")]
         public ActionResult<PieReviewDto> CreatePieReviewForPie(Guid pieId, PieReviewForCreationDto pieReview)
         {
             if (!_piesRepository.PieExists(pieId))
