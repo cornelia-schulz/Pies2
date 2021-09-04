@@ -18,6 +18,7 @@ namespace Pies.API.Entities
         public Guid UserId { get; set; }
         public int ShopId { get; set; }
         public DateTimeOffset DateCreated { get; set; }
+        public DateTimeOffset? DateDeleted { get; set; }
         public ICollection<PieReview> PieReviews { get; set; }
             = new List<PieReview>();
     }

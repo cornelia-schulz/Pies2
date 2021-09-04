@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
+using Pies.API.ActionConstraints;
 using Pies.API.Entities;
 using Pies.API.Helpers;
 using Pies.API.Models;
@@ -75,9 +77,25 @@ namespace Pies.API.Controllers
             return Ok(linkedCollectionResource);
         }
 
+        // locally accept these content types in the request header
+        // this is very restrictive, only these content types are accepted, no others
+        // this can also be applied at controller level to avoid typing it more than once
+        [Produces("application/json",
+            "application/vnd.marvin.hateoas+json",
+            "application/vnd.marvin.pie.full+json",
+            "application/vnd.marvin.pie.full.hateoas+json",
+            "application/vnd.marvin.pie.friendly+json",
+            "application/vnd.marvin.pie.friendly.hateoas+json")]
         [HttpGet("{pieId}", Name="GetPie")]
-        public IActionResult GetPie(Guid pieId, string fields)
+        public IActionResult GetPie(Guid pieId, string fields,
+            [FromHeader(Name = "Accept")] string mediaType)
         {
+            if (!MediaTypeHeaderValue.TryParse(mediaType,
+                out MediaTypeHeaderValue parsedMediaType))
+            {
+                return BadRequest();
+            }
+
             var pieFromRepo = _piesRepository.GetPie(pieId);
 
             if (pieFromRepo == null)
@@ -85,17 +103,53 @@ namespace Pies.API.Controllers
                 return NotFound();
             }
 
-            var links = CreateLinksForPie(pieId, fields);
-            var linkedResourceToReturn =
-                _mapper.Map<PieDto>(pieFromRepo).ShapeData(fields)
-                as IDictionary<string, object>;
+            var includeLinks = parsedMediaType.SubTypeWithoutSuffix
+                .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase);
 
-            linkedResourceToReturn.Add("links", links);
+            IEnumerable<LinkDto> links = new List<LinkDto>();
 
-            return Ok(linkedResourceToReturn);
+            if (includeLinks)
+            {
+                links = CreateLinksForPie(pieId, fields);
+            }
+
+            var primaryMediaType = includeLinks ?
+                parsedMediaType.SubTypeWithoutSuffix
+                .Substring(0, parsedMediaType.SubTypeWithoutSuffix.Length - 8)
+                : parsedMediaType.SubTypeWithoutSuffix;
+
+            // full pie representation
+            if (primaryMediaType == "vnd.marvin.pie.full")
+            {
+                var fullResourceToReturn = _mapper.Map<PieFullDto>(pieFromRepo)
+                    .ShapeData(fields) as IDictionary<string, object>;
+
+                if (includeLinks)
+                {
+                    fullResourceToReturn.Add("links", links);
+                }
+
+                return Ok(fullResourceToReturn);
+            }
+
+            // friendly pie representation
+            var friendlyResourceToReturn = _mapper.Map<PieDto>(pieFromRepo)
+                .ShapeData(fields) as IDictionary<string, object>;
+
+            if (includeLinks)
+            {
+                friendlyResourceToReturn.Add("links", links);
+            }
+
+            return Ok(friendlyResourceToReturn);
         }
 
         [HttpPost(Name = "CreatePie")]
+        [RequestHeaderMatchesMediaType("Content-Type",
+            "application/json",
+            "application/vnd.marvin.pieforcreation+json")]
+        [Consumes("application/json",
+            "application/vnd.marvin.pieforcreation+json")]
         public ActionResult<PieDto> CreatePie(PieForCreationDto pie)
         {
             var pieEntity = _mapper.Map<Entities.Pie>(pie);
@@ -112,6 +166,27 @@ namespace Pies.API.Controllers
             return CreatedAtRoute("GetPie",
                 new { pieId = linkedResourcesToReturn["Id"] },
                 linkedResourcesToReturn);
+        }
+
+        [HttpPost(Name = "CreatePieWithDateDeleted")]
+        [RequestHeaderMatchesMediaType("Content-Type",
+            "application/vnd.marvin.pieforcreationwithdatedeleted+json")]
+        [Consumes("application/vnd.marvin.pieforcreationwithdatedeleted+json")]
+        public IActionResult CreatePieWithDateDeleted(PieForCreationWithDateDeletedDto pie)
+        {
+            var pieEntity = _mapper.Map<Pie>(pie);
+            _piesRepository.AddPie(pieEntity);
+            _piesRepository.Save();
+
+            var pieToReturn = _mapper.Map<PieDto>(pieEntity);
+            var links = CreateLinksForPie(pieToReturn.Id, null);
+            var linkedResourceToReturn = pieToReturn.ShapeData(null)
+                as IDictionary<string, object>;
+            linkedResourceToReturn.Add("links", links);
+
+            return CreatedAtRoute("GetPie",
+                new { pieId = linkedResourceToReturn["Id"] },
+                linkedResourceToReturn);
         }
 
         [HttpOptions]
