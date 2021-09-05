@@ -144,6 +144,27 @@ namespace Pies.API.Controllers
             return Ok(friendlyResourceToReturn);
         }
 
+        [HttpPost(Name = "CreatePieWithDateDeleted")]
+        [RequestHeaderMatchesMediaType("Content-Type",
+            "application/vnd.marvin.pieforcreationwithdatedeleted+json")]
+        [Consumes("application/vnd.marvin.pieforcreationwithdatedeleted+json")]
+        public IActionResult CreatePieWithDateDeleted(PieForCreationWithDateDeletedDto pie)
+        {
+            var pieEntity = _mapper.Map<Pie>(pie);
+            _piesRepository.AddPie(pieEntity);
+            _piesRepository.Save();
+
+            var pieToReturn = _mapper.Map<PieDto>(pieEntity);
+            var links = CreateLinksForPie(pieToReturn.Id, null);
+            var linkedResourceToReturn = pieToReturn.ShapeData(null)
+                as IDictionary<string, object>;
+            linkedResourceToReturn.Add("links", links);
+
+            return CreatedAtRoute("GetPie",
+                new { pieId = linkedResourceToReturn["Id"] },
+                linkedResourceToReturn);
+        }
+
         [HttpPost(Name = "CreatePie")]
         [RequestHeaderMatchesMediaType("Content-Type",
             "application/json",
@@ -166,27 +187,6 @@ namespace Pies.API.Controllers
             return CreatedAtRoute("GetPie",
                 new { pieId = linkedResourcesToReturn["Id"] },
                 linkedResourcesToReturn);
-        }
-
-        [HttpPost(Name = "CreatePieWithDateDeleted")]
-        [RequestHeaderMatchesMediaType("Content-Type",
-            "application/vnd.marvin.pieforcreationwithdatedeleted+json")]
-        [Consumes("application/vnd.marvin.pieforcreationwithdatedeleted+json")]
-        public IActionResult CreatePieWithDateDeleted(PieForCreationWithDateDeletedDto pie)
-        {
-            var pieEntity = _mapper.Map<Pie>(pie);
-            _piesRepository.AddPie(pieEntity);
-            _piesRepository.Save();
-
-            var pieToReturn = _mapper.Map<PieDto>(pieEntity);
-            var links = CreateLinksForPie(pieToReturn.Id, null);
-            var linkedResourceToReturn = pieToReturn.ShapeData(null)
-                as IDictionary<string, object>;
-            linkedResourceToReturn.Add("links", links);
-
-            return CreatedAtRoute("GetPie",
-                new { pieId = linkedResourceToReturn["Id"] },
-                linkedResourceToReturn);
         }
 
         [HttpOptions]

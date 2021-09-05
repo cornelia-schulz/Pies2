@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -14,6 +15,7 @@ namespace Pies.API.Controllers
 {
     [ApiController]
     [Route("api/v1/pies/{pieId}/piereviews")]
+    //[ResponseCache(CacheProfileName = "240SecondsCacheProfile")]
     public class PieReviewsController : ControllerBase
     {
         private readonly IPiesRepository _piesRepository;
@@ -39,6 +41,9 @@ namespace Pies.API.Controllers
         }
 
         [HttpGet("{pieReviewId}", Name="GetPieReviewForPie")]
+        //[ResponseCache(Duration = 120)]
+        [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 1000)]
+        [HttpCacheValidation(MustRevalidate = false)]
         public ActionResult<PieReviewDto> GetReviewForPie(Guid pieId, Guid pieReviewId)
         {
             if (!_piesRepository.PieExists(pieId))

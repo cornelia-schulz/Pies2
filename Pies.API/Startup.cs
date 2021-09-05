@@ -1,3 +1,4 @@
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -28,10 +29,26 @@ namespace Pies.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpCacheHeaders((expirationModelOptions) => 
+            {
+                expirationModelOptions.MaxAge = 60;
+                expirationModelOptions.CacheLocation = Marvin.Cache.Headers.CacheLocation.Private;
+            },
+            (validationModelOptions) => 
+            {
+                validationModelOptions.MustRevalidate = true;
+            });
+
+            services.AddResponseCaching();
             // default output is json, add xml as additional format and send a 406 not acceptable for any other formats requested in the header
             services.AddControllers(setupAction =>
             {
                 setupAction.ReturnHttpNotAcceptable = true;
+                setupAction.CacheProfiles.Add("240SecondsCacheProfile",
+                    new CacheProfile()
+                    {
+                        Duration = 240
+                    });
             }).AddNewtonsoftJson(setupAction =>
             {
                 setupAction.SerializerSettings.ContractResolver =
@@ -127,6 +144,10 @@ namespace Pies.API
                     });
                 });
             }
+            // caching needs to be before routing etc, so it can be hit first
+            app.UseResponseCaching();
+
+            app.UseHttpCacheHeaders();
 
             app.UseRouting();
 
