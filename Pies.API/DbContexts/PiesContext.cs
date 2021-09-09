@@ -16,6 +16,8 @@ namespace Pies.API.DbContexts
         public DbSet<PieFlavourType> PieFlavourTypes { get; set; }
         public DbSet<PieReviewStatus> PieReviewStatuses { get; set; }
         public DbSet<PieReview> PieReviews { get; set; }
+        public DbSet<Shop> Shops { get; set; }
+        public DbSet<Location> Locations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,7 +75,7 @@ namespace Pies.API.DbContexts
                    DateCreated = new DateTime(2020, 7, 23),
                    Name = "Mushroom Pie",
                    UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
-                   ShopId = 1
+                   ShopId = Guid.Parse("f8f98662-10f8-11ec-82a8-0242ac130003")
                },
                new Pie
                {
@@ -82,7 +84,7 @@ namespace Pies.API.DbContexts
                    DateCreated = new DateTime(2021, 8, 23),
                    Name = "Butter Chicken Pie",
                    UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
-                   ShopId = 1
+                   ShopId = Guid.Parse("f8f98446-10f8-11ec-82a8-0242ac130003")
                },
                new Pie
                {
@@ -91,7 +93,7 @@ namespace Pies.API.DbContexts
                    DateCreated = new DateTime(2019, 9, 26),
                    Name = "Steak Pie",
                    UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
-                   ShopId = 1
+                   ShopId = Guid.Parse("f8f98086-10f8-11ec-82a8-0242ac130003")
                },
                new Pie
                {
@@ -100,7 +102,7 @@ namespace Pies.API.DbContexts
                    DateCreated = new DateTime(2020, 3, 2),
                    Name = "Apple Pie",
                    UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
-                   ShopId = 2
+                   ShopId = Guid.Parse("f8f978b6-10f8-11ec-82a8-0242ac130003")
                }
                );
 
@@ -158,6 +160,92 @@ namespace Pies.API.DbContexts
                     UserId = Guid.Parse("d8663e5e-7486-4f23-8739-6e0de1bea7ee"),
                     Description = "Superb",
                     Rating = 5
+                }
+                );
+
+            modelBuilder.Entity<Shop>().HasData(
+                new Shop()
+                {
+                    Id = Guid.Parse("f8f978b6-10f8-11ec-82a8-0242ac130003"),
+                    LocationId = Guid.Parse("f8f97e88-10f8-11ec-82a8-0242ac130003"),
+                    Name = "Pies and Coffee",
+                    UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
+                    DateCreated = new DateTime(2020, 6, 2),
+                    Description = "Delicious, homemade daily Pies, Slices, Cakes, Savories and Sandwiches",
+                    ReviewStatusId = Guid.Parse("f8f97fb4-10f8-11ec-82a8-0242ac130003")
+                },
+                new Shop()
+                {
+                    Id = Guid.Parse("f8f98086-10f8-11ec-82a8-0242ac130003"),
+                    LocationId = Guid.Parse("f8f9814e-10f8-11ec-82a8-0242ac130003"),
+                    Name = "The great pastry shop",
+                    UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
+                    DateCreated = new DateTime(2019, 7, 12),
+                    Description = "Family patisserie. Pastries, pasties, entremets, choux, tarts, cakey stuff.",
+                    ReviewStatusId = Guid.Parse("f8f9820c-10f8-11ec-82a8-0242ac130003")
+                },
+                new Shop()
+                {
+                    Id = Guid.Parse("f8f98446-10f8-11ec-82a8-0242ac130003"),
+                    LocationId = Guid.Parse("f8f984fa-10f8-11ec-82a8-0242ac130003"),
+                    Name = "Copenhagen Bakery",
+                    UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
+                    DateCreated = new DateTime(2021, 4, 8),
+                    Description = "Award Winning Danish-European Style Bakery, Copenhagen serves a delicious selection breads and treats, at the café and online.",
+                    ReviewStatusId = Guid.Parse("f8f985ae-10f8-11ec-82a8-0242ac130003")
+                },
+                new Shop()
+                {
+                    Id = Guid.Parse("f8f98662-10f8-11ec-82a8-0242ac130003"),
+                    LocationId = Guid.Parse("f8f97e88-10f8-11ec-82a8-0442ac130003"),
+                    Name = "Pioneer Pies",
+                    UserId = Guid.Parse("d8663e5e-7486-4f81-8739-6e0de1bea7ee"),
+                    DateCreated = new DateTime(2017, 12, 6),
+                    Description = "Pioneer Pie Co is a family run business dedicated to producing Pies of the highest quality.",
+                    ReviewStatusId = Guid.Parse("f8f97fb4-10f8-11ec-82a8-0422ac130003")
+                }
+                );
+
+            modelBuilder.Entity<Location>().HasData(
+                new Location()
+                {
+                    Id = Guid.Parse("f8f97e88-10f8-11ec-82a8-0242ac130003"),
+                    Street = "290 Selwyn St",
+                    City = "Christchurch",
+                    Country = "New Zealand",
+                    County = "Canterbury",
+                    Longitude = 172.62206744255727,
+                    Latitude = -43.549126911758606
+                },
+                new Location()
+                {
+                    Id = Guid.Parse("f8f9814e-10f8-11ec-82a8-0242ac130003"),
+                    Street = "Riverside Market",
+                    City = "Christchurch",
+                    Country = "New Zealand",
+                    County = "Canterbury",
+                    Longitude = 172.63397647139195,
+                    Latitude = -43.533927237712405
+                },
+                new Location()
+                {
+                    Id = Guid.Parse("f8f984fa-10f8-11ec-82a8-0242ac130003"),
+                    Street = "409 Harewood Rd",
+                    City = "Christchurch",
+                    Country = "New Zealand",
+                    County = "Canterbury",
+                    Longitude = 172.62206744255727,
+                    Latitude = -43.549126911758606
+                },
+                new Location()
+                {
+                    Id = Guid.Parse("f8f97e88-10f8-11ec-82a8-0442ac130003"),
+                    Street = "247 Dairy Flat Highway",
+                    City = "Auckland",
+                    Country = "New Zealand",
+                    County = "Auckland",
+                    Longitude = 174.6936778232727,
+                    Latitude = -36.72440208323365
                 }
                 );
 

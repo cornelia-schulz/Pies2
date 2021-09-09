@@ -3,7 +3,6 @@ using Pies.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Pies.API.Services
 {
@@ -21,6 +20,7 @@ namespace Pies.API.Services
         public PropertyMappingService()
         {
             _propertyMappings.Add(new PropertyMapping<PieDto, Pie>(_piePropertyMapping));
+            _propertyMappings.Add(new PropertyMapping<ShopDto, Shop>(_piePropertyMapping));
         }
 
         public bool ValidMappingExistsFor<TSource, TDestination>(string fields)

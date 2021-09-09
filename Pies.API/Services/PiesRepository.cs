@@ -233,6 +233,45 @@ namespace Pies.API.Services
             _context.PieReviews.Remove(pieReview);
         }
 
+        public IEnumerable<Shop> GetShops()
+        {
+            return _context.Shops.ToList();
+        }
+
+        public PagedList<Shop> GetShops(PiesResourceParameters piesResourceParameters)
+        {
+            if (piesResourceParameters == null)
+            {
+                throw new ArgumentNullException(nameof(piesResourceParameters));
+            }
+
+            var collection = _context.Shops as IQueryable<Shop>;
+
+            if (!string.IsNullOrWhiteSpace(piesResourceParameters.Name))
+            {
+                var name = piesResourceParameters.Name.Trim();
+                collection = collection.Where(a => a.Name == name);
+            }
+
+            if (!string.IsNullOrWhiteSpace(piesResourceParameters.SearchQuery))
+            {
+                var searchQuery = piesResourceParameters.SearchQuery.Trim();
+                collection = collection.Where(a => a.Name.Contains(searchQuery));
+            }
+
+            if (!string.IsNullOrWhiteSpace(piesResourceParameters.OrderBy))
+            {
+                // get property mapping dictionary
+                var piePropertyMappingDictionary =
+                    _propertyMappingService.GetPropertyMapping<ShopDto, Shop>();
+                collection = collection.ApplySort(piesResourceParameters.OrderBy, piePropertyMappingDictionary);
+            }
+
+            return PagedList<Shop>.Create(collection,
+                piesResourceParameters.PageNumber,
+                piesResourceParameters.PageSize);
+        }
+
         public bool Save()
         {
             return (_context.SaveChanges() >= 0);

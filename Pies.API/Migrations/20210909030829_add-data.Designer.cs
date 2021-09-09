@@ -10,8 +10,8 @@ using Pies.API.DbContexts;
 namespace Pies.API.Migrations
 {
     [DbContext(typeof(PiesContext))]
-    [Migration("20210729024544_add_data")]
-    partial class add_data
+    [Migration("20210909030829_add-data")]
+    partial class adddata
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,77 @@ namespace Pies.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Pies.API.Entities.Location", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("County")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Locations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f8f97e88-10f8-11ec-82a8-0242ac130003"),
+                            City = "Christchurch",
+                            Country = "New Zealand",
+                            County = "Canterbury",
+                            Latitude = -43.549126911758606,
+                            Longitude = 172.62206744255727,
+                            Street = "290 Selwyn St"
+                        },
+                        new
+                        {
+                            Id = new Guid("f8f9814e-10f8-11ec-82a8-0242ac130003"),
+                            City = "Christchurch",
+                            Country = "New Zealand",
+                            County = "Canterbury",
+                            Latitude = -43.533927237712405,
+                            Longitude = 172.63397647139195,
+                            Street = "Riverside Market"
+                        },
+                        new
+                        {
+                            Id = new Guid("f8f984fa-10f8-11ec-82a8-0242ac130003"),
+                            City = "Christchurch",
+                            Country = "New Zealand",
+                            County = "Canterbury",
+                            Latitude = -43.549126911758606,
+                            Longitude = 172.62206744255727,
+                            Street = "409 Harewood Rd"
+                        },
+                        new
+                        {
+                            Id = new Guid("f8f97e88-10f8-11ec-82a8-0442ac130003"),
+                            City = "Auckland",
+                            Country = "New Zealand",
+                            County = "Auckland",
+                            Latitude = -36.724402083233649,
+                            Longitude = 174.69367782327271,
+                            Street = "247 Dairy Flat Highway"
+                        });
+                });
 
             modelBuilder.Entity("Pies.API.Entities.Pie", b =>
                 {
@@ -30,6 +101,9 @@ namespace Pies.API.Migrations
                     b.Property<DateTimeOffset>("DateCreated")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset?>("DateDeleted")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -38,8 +112,8 @@ namespace Pies.API.Migrations
                     b.Property<Guid>("PieTypeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("ShopId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ShopId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -57,7 +131,7 @@ namespace Pies.API.Migrations
                             DateCreated = new DateTimeOffset(new DateTime(2020, 7, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 12, 0, 0, 0)),
                             Name = "Mushroom Pie",
                             PieTypeId = new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
-                            ShopId = 1,
+                            ShopId = new Guid("f8f98662-10f8-11ec-82a8-0242ac130003"),
                             UserId = new Guid("d8663e5e-7486-4f81-8739-6e0de1bea7ee")
                         },
                         new
@@ -66,7 +140,7 @@ namespace Pies.API.Migrations
                             DateCreated = new DateTimeOffset(new DateTime(2021, 8, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 12, 0, 0, 0)),
                             Name = "Butter Chicken Pie",
                             PieTypeId = new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
-                            ShopId = 1,
+                            ShopId = new Guid("f8f98446-10f8-11ec-82a8-0242ac130003"),
                             UserId = new Guid("d8663e5e-7486-4f81-8739-6e0de1bea7ee")
                         },
                         new
@@ -75,7 +149,7 @@ namespace Pies.API.Migrations
                             DateCreated = new DateTimeOffset(new DateTime(2019, 9, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 12, 0, 0, 0)),
                             Name = "Steak Pie",
                             PieTypeId = new Guid("da2fd609-d754-4feb-8acd-c4f9ff13ba96"),
-                            ShopId = 1,
+                            ShopId = new Guid("f8f98086-10f8-11ec-82a8-0242ac130003"),
                             UserId = new Guid("d8663e5e-7486-4f81-8739-6e0de1bea7ee")
                         },
                         new
@@ -84,7 +158,7 @@ namespace Pies.API.Migrations
                             DateCreated = new DateTimeOffset(new DateTime(2020, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 13, 0, 0, 0)),
                             Name = "Apple Pie",
                             PieTypeId = new Guid("2902b665-1190-4c70-9915-b9c2d7680450"),
-                            ShopId = 2,
+                            ShopId = new Guid("f8f978b6-10f8-11ec-82a8-0242ac130003"),
                             UserId = new Guid("d8663e5e-7486-4f81-8739-6e0de1bea7ee")
                         });
                 });
@@ -131,7 +205,9 @@ namespace Pies.API.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
 
                     b.Property<Guid>("PieId")
                         .HasColumnType("uniqueidentifier");
@@ -261,6 +337,77 @@ namespace Pies.API.Migrations
                             Id = new Guid("2ee49fe3-edf2-4f91-8409-3eb25ce6ca51"),
                             FlavourTypeId = 1,
                             Name = "Pork & Apple"
+                        });
+                });
+
+            modelBuilder.Entity("Pies.API.Entities.Shop", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DateCreated")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ReviewStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Shops");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f8f978b6-10f8-11ec-82a8-0242ac130003"),
+                            DateCreated = new DateTimeOffset(new DateTime(2020, 6, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 12, 0, 0, 0)),
+                            Description = "Delicious, homemade daily Pies, Slices, Cakes, Savories and Sandwiches",
+                            LocationId = new Guid("f8f97e88-10f8-11ec-82a8-0242ac130003"),
+                            Name = "Pies and Coffee",
+                            ReviewStatusId = new Guid("f8f97fb4-10f8-11ec-82a8-0242ac130003"),
+                            UserId = new Guid("d8663e5e-7486-4f81-8739-6e0de1bea7ee")
+                        },
+                        new
+                        {
+                            Id = new Guid("f8f98086-10f8-11ec-82a8-0242ac130003"),
+                            DateCreated = new DateTimeOffset(new DateTime(2019, 7, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 12, 0, 0, 0)),
+                            Description = "Family patisserie. Pastries, pasties, entremets, choux, tarts, cakey stuff.",
+                            LocationId = new Guid("f8f9814e-10f8-11ec-82a8-0242ac130003"),
+                            Name = "The great pastry shop",
+                            ReviewStatusId = new Guid("f8f9820c-10f8-11ec-82a8-0242ac130003"),
+                            UserId = new Guid("d8663e5e-7486-4f81-8739-6e0de1bea7ee")
+                        },
+                        new
+                        {
+                            Id = new Guid("f8f98446-10f8-11ec-82a8-0242ac130003"),
+                            DateCreated = new DateTimeOffset(new DateTime(2021, 4, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 12, 0, 0, 0)),
+                            Description = "Award Winning Danish-European Style Bakery, Copenhagen serves a delicious selection breads and treats, at the café and online.",
+                            LocationId = new Guid("f8f984fa-10f8-11ec-82a8-0242ac130003"),
+                            Name = "Copenhagen Bakery",
+                            ReviewStatusId = new Guid("f8f985ae-10f8-11ec-82a8-0242ac130003"),
+                            UserId = new Guid("d8663e5e-7486-4f81-8739-6e0de1bea7ee")
+                        },
+                        new
+                        {
+                            Id = new Guid("f8f98662-10f8-11ec-82a8-0242ac130003"),
+                            DateCreated = new DateTimeOffset(new DateTime(2017, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 13, 0, 0, 0)),
+                            Description = "Pioneer Pie Co is a family run business dedicated to producing Pies of the highest quality.",
+                            LocationId = new Guid("f8f97e88-10f8-11ec-82a8-0442ac130003"),
+                            Name = "Pioneer Pies",
+                            ReviewStatusId = new Guid("f8f97fb4-10f8-11ec-82a8-0422ac130003"),
+                            UserId = new Guid("d8663e5e-7486-4f81-8739-6e0de1bea7ee")
                         });
                 });
 

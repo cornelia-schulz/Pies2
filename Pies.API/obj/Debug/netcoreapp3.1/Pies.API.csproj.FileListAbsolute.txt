@@ -62,10 +62,10 @@ C:\Working\courses\pies\Pies.API\obj\Debug\netcoreapp3.1\Pies.API.csproj.CopyCom
 C:\Working\courses\pies\Pies.API\obj\Debug\netcoreapp3.1\Pies.API.dll
 C:\Working\courses\pies\Pies.API\obj\Debug\netcoreapp3.1\Pies.API.pdb
 C:\Working\courses\pies\Pies.API\obj\Debug\netcoreapp3.1\Pies.API.genruntimeconfig.cache
-C:\Working\courses\pies\Pies.API\obj\Debug\netcoreapp3.1\Pies.API.csproj.AssemblyReference.cache
 C:\Working\courses\Pies\Pies.API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.JsonPatch.dll
 C:\Working\courses\Pies\Pies.API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Working\courses\Pies\Pies.API\bin\Debug\netcoreapp3.1\Newtonsoft.Json.Bson.dll
 C:\Working\courses\Pies\Pies.API\bin\Debug\netcoreapp3.1\System.Linq.Dynamic.Core.dll
 C:\Working\courses\pies\Pies.API\bin\Debug\netcoreapp3.1\Marvin.Cache.Headers.dll
 C:\Working\courses\pies\Pies.API\obj\Debug\netcoreapp3.1\Pies.API.MvcApplicationPartsAssemblyInfo.cs
+C:\Working\courses\pies\Pies.API\obj\Debug\netcoreapp3.1\Pies.API.csproj.AssemblyReference.cache

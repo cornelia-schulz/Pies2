@@ -27,6 +27,8 @@ namespace Pies.API.Services
         void AddPieReview(Guid pieId, PieReview pieReview);
         void UpdatePieReview(PieReview pieReview);
         void DeletePieReview(PieReview pieReview);
+        IEnumerable<Shop> GetShops();
+        PagedList<Shop> GetShops(PiesResourceParameters piesResourceParameters);
         bool Save();
     }
 }

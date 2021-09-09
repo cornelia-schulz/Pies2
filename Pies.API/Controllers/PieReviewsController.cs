@@ -16,6 +16,8 @@ namespace Pies.API.Controllers
     [ApiController]
     [Route("api/v1/pies/{pieId}/piereviews")]
     //[ResponseCache(CacheProfileName = "240SecondsCacheProfile")]
+    [HttpCacheExpiration(CacheLocation = CacheLocation.Public)]
+    [HttpCacheValidation(MustRevalidate = true)]
     public class PieReviewsController : ControllerBase
     {
         private readonly IPiesRepository _piesRepository;
