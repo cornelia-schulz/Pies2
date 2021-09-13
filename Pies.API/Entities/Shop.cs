@@ -14,5 +14,6 @@ namespace Pies.API.Entities
         public DateTimeOffset DateCreated { get; set; }
         public string Description { get; set; }
         public Guid ReviewStatusId { get; set; }
+        public Location Location { get; set; }
     }
 }

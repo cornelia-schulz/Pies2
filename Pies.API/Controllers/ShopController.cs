@@ -41,6 +41,11 @@ namespace Pies.API.Controllers
 
             var shopsFromRepo = _piesRepository.GetShops(piesResourceParameters);
 
+            foreach (var shop in shopsFromRepo)
+            {
+                shop.Location = _piesRepository.GetLocation(shop.LocationId);
+            }
+
             var paginationMetadata = new
             {
                 totalCount = shopsFromRepo.TotalCount,
@@ -92,6 +97,8 @@ namespace Pies.API.Controllers
             {
                 return NotFound();
             }
+
+            shopFromRepo.Location = _piesRepository.GetLocation(shopFromRepo.LocationId);
 
             var includeLinks = parsedMediaType.SubTypeWithoutSuffix
                 .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase);

@@ -283,6 +283,17 @@ namespace Pies.API.Services
               .Where(c => c.Id == shopId).FirstOrDefault();
         }
 
+        public Location GetLocation(Guid locationId)
+        {
+            if (locationId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(locationId));
+            }
+
+            return _context.Locations
+                .Where(c => c.Id == locationId).FirstOrDefault();
+        }
+
         public bool Save()
         {
             return (_context.SaveChanges() >= 0);

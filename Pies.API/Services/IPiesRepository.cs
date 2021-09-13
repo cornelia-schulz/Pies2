@@ -30,6 +30,7 @@ namespace Pies.API.Services
         IEnumerable<Shop> GetShops();
         PagedList<Shop> GetShops(PiesResourceParameters piesResourceParameters);
         Shop GetShop(Guid shopId);
+        Location GetLocation(Guid locationId);
         bool Save();
     }
 }
