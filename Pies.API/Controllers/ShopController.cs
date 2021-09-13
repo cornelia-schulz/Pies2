@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using Pies.API.Entities;
 using Pies.API.Helpers;
 using Pies.API.Models;
@@ -73,6 +74,50 @@ namespace Pies.API.Controllers
             };
 
             return Ok(linkedCollectionResource);
+        }
+
+        [HttpGet("{shopId}", Name="GetShop")]
+        public IActionResult GetShop(Guid shopId, string fields,
+            [FromHeader(Name = "Accept")] string mediaType)
+        {
+            if (!MediaTypeHeaderValue.TryParse(mediaType,
+                out MediaTypeHeaderValue parsedMediaType))
+            {
+                return BadRequest();
+            }
+
+            var shopFromRepo = _piesRepository.GetShop(shopId);
+
+            if (shopFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            var includeLinks = parsedMediaType.SubTypeWithoutSuffix
+                .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase);
+
+            IEnumerable<LinkDto> links = new List<LinkDto>();
+
+            if (includeLinks)
+            {
+                links = CreateLinksForShop(shopId, fields);
+            }
+
+            var primaryMediaType = includeLinks ?
+                parsedMediaType.SubTypeWithoutSuffix
+                .Substring(0, parsedMediaType.SubTypeWithoutSuffix.Length - 8)
+                : parsedMediaType.SubTypeWithoutSuffix;
+
+            // friendly pie representation
+            var friendlyResourceToReturn = _mapper.Map<ShopDto>(shopFromRepo)
+                .ShapeData(fields) as IDictionary<string, object>;
+
+            if (includeLinks)
+            {
+                friendlyResourceToReturn.Add("links", links);
+            }
+
+            return Ok(friendlyResourceToReturn);
         }
 
         private string CreateShopsResourceUri(

@@ -272,6 +272,17 @@ namespace Pies.API.Services
                 piesResourceParameters.PageSize);
         }
 
+        public Shop GetShop(Guid shopId)
+        {
+            if (shopId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(shopId));
+            }
+
+            return _context.Shops
+              .Where(c => c.Id == shopId).FirstOrDefault();
+        }
+
         public bool Save()
         {
             return (_context.SaveChanges() >= 0);
