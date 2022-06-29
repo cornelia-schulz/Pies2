@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Pies.API.ResourceParameters
+﻿namespace Pies.API.ResourceParameters
 {
-    public class PiesResourceParameters
+    public class DefaultResourceParameters
     {
         const int maxPageSize = 20;
         public string Name { get; set; }

@@ -11,13 +11,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using Microsoft.AspNetCore.Cors;
 
 namespace Pies.API.Controllers
-{
+{ 
+
     [ApiController]
     [Route("api/v1/shops")]
     public class ShopController : ControllerBase
     {
+        //public IActionResult GetShops([FromQuery] ShopSearchParams searchParams)
         private readonly IPiesRepository _piesRepository;
         private readonly IMapper _mapper;
         private readonly IPropertyMappingService _propertyMappingService;
@@ -30,59 +33,57 @@ namespace Pies.API.Controllers
             _propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
+        [EnableCors("Policy")]
         [HttpGet(Name = "GetShops")]
         [HttpHead]
-        public IActionResult GetShops([FromQuery] PiesResourceParameters piesResourceParameters)
+        public IActionResult GetShops([FromQuery] ShopResourceParameters shopResourceParameters)
         {
-            if (!_propertyMappingService.ValidMappingExistsFor<ShopDto, Shop>(piesResourceParameters.OrderBy))
+            if (!_propertyMappingService.ValidMappingExistsFor<ShopDto, Shop>(shopResourceParameters.OrderBy))
             {
                 return BadRequest();
             }
 
-            var shopsFromRepo = _piesRepository.GetShops(piesResourceParameters);
-
-            foreach (var shop in shopsFromRepo)
             {
-                shop.Location = _piesRepository.GetLocation(shop.LocationId);
+                var shopsFromRepo = _piesRepository.GetShops(shopResourceParameters);
+                
+                var paginationMetadata = new
+                {
+                    totalCount = shopsFromRepo.TotalCount,
+                    pageSize = shopsFromRepo.PageSize,
+                    currentPage = shopsFromRepo.CurrentPage,
+                    totalPages = shopsFromRepo.TotalPages
+                };
+
+                Response.Headers.Add("X-Pagination",
+                    JsonSerializer.Serialize(paginationMetadata));
+
+                var links = CreateLinksForShops(shopResourceParameters,
+                    shopsFromRepo.HasNext,
+                    shopsFromRepo.HasPrevious);
+
+                var shapedShops = _mapper.Map<IEnumerable<ShopDto>>(shopsFromRepo)
+                    .ShapeData(shopResourceParameters.Fields);
+
+                var shapedShopsWithLinks = shapedShops.Select(shop =>
+                {
+                    var shopAsDictionary = shop as IDictionary<string, object>;
+                    var shopLinks = CreateLinksForShop((Guid)shopAsDictionary["Id"], null);
+                    shopAsDictionary.Add("links", shopLinks);
+                    return shopAsDictionary;
+                });
+
+                var linkedCollectionResource = new
+                {
+                    value = shapedShopsWithLinks,
+                    links
+                };
+
+                return Ok(linkedCollectionResource);
             }
-
-            var paginationMetadata = new
-            {
-                totalCount = shopsFromRepo.TotalCount,
-                pageSize = shopsFromRepo.PageSize,
-                currentPage = shopsFromRepo.CurrentPage,
-                totalPages = shopsFromRepo.TotalPages
-            };
-
-            Response.Headers.Add("X-Pagination",
-                JsonSerializer.Serialize(paginationMetadata));
-
-            var links = CreateLinksForShops(piesResourceParameters,
-                shopsFromRepo.HasNext,
-                shopsFromRepo.HasPrevious);
-
-            var shapedShops = _mapper.Map<IEnumerable<ShopDto>>(shopsFromRepo)
-                .ShapeData(piesResourceParameters.Fields);
-
-            var shapedShopsWithLinks = shapedShops.Select(shop =>
-            {
-                var shopAsDictionary = shop as IDictionary<string, object>;
-                var shopLinks = CreateLinksForShop((Guid)shopAsDictionary["Id"], null);
-                shopAsDictionary.Add("links", shopLinks);
-                return shopAsDictionary;
-            });
-
-            var linkedCollectionResource = new
-            {
-                value = shapedShopsWithLinks,
-                links
-            };
-
-            return Ok(linkedCollectionResource);
         }
 
         [HttpGet("{shopId}", Name="GetShop")]
-        public IActionResult GetShop(Guid shopId, string fields,
+            public IActionResult GetShop(Guid shopId, string fields,
             [FromHeader(Name = "Accept")] string mediaType)
         {
             if (!MediaTypeHeaderValue.TryParse(mediaType,
@@ -98,7 +99,7 @@ namespace Pies.API.Controllers
                 return NotFound();
             }
 
-            shopFromRepo.Location = _piesRepository.GetLocation(shopFromRepo.LocationId);
+            //shopFromRepo.Location = _piesRepository.GetLocation(shopFromRepo.LocationId);
 
             var includeLinks = parsedMediaType.SubTypeWithoutSuffix
                 .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase);
@@ -127,8 +128,8 @@ namespace Pies.API.Controllers
             return Ok(friendlyResourceToReturn);
         }
 
-        private string CreateShopsResourceUri(
-            PiesResourceParameters piesResourceParameters,
+            private string CreateShopsResourceUri(
+            DefaultResourceParameters piesResourceParameters,
             ResourceUriType type)
         {
             switch (type)
@@ -193,7 +194,7 @@ namespace Pies.API.Controllers
         }
 
         private IEnumerable<LinkDto> CreateLinksForShops(
-            PiesResourceParameters piesResourceParameters,
+            DefaultResourceParameters piesResourceParameters,
             bool hasNext, bool hasPrevious)
         {
             var links = new List<LinkDto>();

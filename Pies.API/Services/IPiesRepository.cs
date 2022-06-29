@@ -9,7 +9,7 @@ namespace Pies.API.Services
     public interface IPiesRepository
     {    
         IEnumerable<Pie> GetPies();
-        PagedList<Pie> GetPies(PiesResourceParameters piesResourceParameters);
+        PagedList<Pie> GetPies(DefaultResourceParameters piesResourceParameters);
         IEnumerable<Pie> GetPies(IEnumerable<Guid> pieIds);
         Pie GetPie(Guid pieId);
         void AddPie(Pie pie);
@@ -28,9 +28,8 @@ namespace Pies.API.Services
         void UpdatePieReview(PieReview pieReview);
         void DeletePieReview(PieReview pieReview);
         IEnumerable<Shop> GetShops();
-        PagedList<Shop> GetShops(PiesResourceParameters piesResourceParameters);
+        PagedList<Shop> GetShops(ShopResourceParameters piesResourceParameters);
         Shop GetShop(Guid shopId);
-        Location GetLocation(Guid locationId);
         bool Save();
     }
 }

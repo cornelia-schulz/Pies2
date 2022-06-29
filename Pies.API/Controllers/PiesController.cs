@@ -33,7 +33,7 @@ namespace Pies.API.Controllers
         [HttpGet(Name = "GetPies")]
         [HttpHead]
         // get pies and if query string is passed in then filter by query string
-        public IActionResult GetPies([FromQuery] PiesResourceParameters piesResourceParameters)
+        public IActionResult GetPies([FromQuery] DefaultResourceParameters piesResourceParameters)
         {
             if (!_propertyMappingService.ValidMappingExistsFor<PieDto, Pie>(piesResourceParameters.OrderBy))
             {
@@ -214,7 +214,7 @@ namespace Pies.API.Controllers
 
 
         private string CreatePiesResourceUri(
-            PiesResourceParameters piesResourceParameters,
+            DefaultResourceParameters piesResourceParameters,
             ResourceUriType type)
         {
             switch (type)
@@ -294,7 +294,7 @@ namespace Pies.API.Controllers
         }
 
         private IEnumerable<LinkDto> CreateLinksForPies(
-            PiesResourceParameters piesResourceParameters,
+            DefaultResourceParameters piesResourceParameters,
             bool hasNext, bool hasPrevious)
         {
             var links = new List<LinkDto>();

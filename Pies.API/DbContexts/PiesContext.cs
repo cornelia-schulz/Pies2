@@ -9,6 +9,7 @@ namespace Pies.API.DbContexts
         public PiesContext(DbContextOptions<PiesContext> options)
            : base(options)
         {
+
         }
 
         public DbSet<PieType> PieTypes { get; set; }
@@ -19,8 +20,11 @@ namespace Pies.API.DbContexts
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Location> Locations { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //modelBuilder.HasDefaultSchema("Ordering");
+
             // seed the database with dummy data
             modelBuilder.Entity<PieType>().HasData(
                 new PieType()
@@ -234,8 +238,8 @@ namespace Pies.API.DbContexts
                     City = "Christchurch",
                     Country = "New Zealand",
                     County = "Canterbury",
-                    Longitude = 172.62206744255727,
-                    Latitude = -43.549126911758606
+                    Longitude = 172.57846588303863,
+                    Latitude = -43.484311485809485
                 },
                 new Location()
                 {
@@ -244,8 +248,8 @@ namespace Pies.API.DbContexts
                     City = "Auckland",
                     Country = "New Zealand",
                     County = "Auckland",
-                    Longitude = 174.6936778232727,
-                    Latitude = -36.72440208323365
+                    Longitude = 174.6938816686053,
+                    Latitude = -36.72402368920113
                 }
                 );
 

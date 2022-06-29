@@ -29,6 +29,19 @@ namespace Pies.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services
+                .AddCors(o =>
+                    o
+                        .AddPolicy("Policy",
+                        builder =>
+                        {
+                            builder
+                                .WithOrigins("https://localhost:3001",
+                                "http://localhost:3000",
+                                "http://localhost:3001")
+                                .AllowAnyMethod()
+                                .AllowAnyHeader();
+                        }));
             services.AddHttpCacheHeaders((expirationModelOptions) => 
             {
                 expirationModelOptions.MaxAge = 60;
@@ -122,8 +135,10 @@ namespace Pies.API
             services.AddDbContext<PiesContext>(options =>
             {
                 options.UseSqlServer(
-                    @"Server=(localdb)\mssqllocaldb;Database=PiesDB;Trusted_Connection=True;");
-            }); 
+                    @"Server=localhost;Database=PiesDB;User Id=pies_db;Password=Password11;Integrated Security=false;");
+                //@"Server=(localdb)\mssqllocaldb;Database=PiesDB;Trusted_Connection=True;");
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -144,12 +159,15 @@ namespace Pies.API
                     });
                 });
             }
+
             // caching needs to be before routing etc, so it can be hit first
             app.UseResponseCaching();
 
             app.UseHttpCacheHeaders();
 
             app.UseRouting();
+
+            app.UseCors("Policy");
 
             app.UseAuthorization();
 

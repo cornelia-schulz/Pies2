@@ -1,4 +1,5 @@
-﻿using Pies.API.DbContexts;
+﻿using Microsoft.EntityFrameworkCore;
+using Pies.API.DbContexts;
 using Pies.API.Entities;
 using Pies.API.Helpers;
 using Pies.API.Models;
@@ -61,7 +62,7 @@ namespace Pies.API.Services
         }
 
         // get pies and filter by query string and/or search by searchString
-        public PagedList<Pie> GetPies(PiesResourceParameters piesResourceParameters)
+        public PagedList<Pie> GetPies(DefaultResourceParameters piesResourceParameters)
         {
             if (piesResourceParameters == null)
             {
@@ -90,7 +91,7 @@ namespace Pies.API.Services
                 collection = collection.ApplySort(piesResourceParameters.OrderBy, piePropertyMappingDictionary);
             }
 
-            return PagedList<Pie>.Create(collection,
+             return PagedList<Pie>.Create(collection,
                 piesResourceParameters.PageNumber,
                 piesResourceParameters.PageSize);
         }
@@ -238,38 +239,42 @@ namespace Pies.API.Services
             return _context.Shops.ToList();
         }
 
-        public PagedList<Shop> GetShops(PiesResourceParameters piesResourceParameters)
+        public PagedList<Shop> GetShops(ShopResourceParameters shopResourceParameters)
         {
-            if (piesResourceParameters == null)
+            if (shopResourceParameters == null)
             {
-                throw new ArgumentNullException(nameof(piesResourceParameters));
+                throw new ArgumentNullException(nameof(shopResourceParameters));
             }
 
-            var collection = _context.Shops as IQueryable<Shop>;
+            var collection =   _context.Shops.Include(s => s.Location)
+                                             .Where(s => s.Location.Latitude > shopResourceParameters.SouthWestLat &&
+                                                         s.Location.Latitude < shopResourceParameters.NorthEastLat &&
+                                                         s.Location.Longitude > shopResourceParameters.SouthWestLng &&
+                                                         s.Location.Longitude < shopResourceParameters.NorthEastLng);
 
-            if (!string.IsNullOrWhiteSpace(piesResourceParameters.Name))
+            if (!string.IsNullOrWhiteSpace(shopResourceParameters.Name))
             {
-                var name = piesResourceParameters.Name.Trim();
+                var name = shopResourceParameters.Name.Trim();
                 collection = collection.Where(a => a.Name == name);
             }
 
-            if (!string.IsNullOrWhiteSpace(piesResourceParameters.SearchQuery))
+            if (!string.IsNullOrWhiteSpace(shopResourceParameters.SearchQuery))
             {
-                var searchQuery = piesResourceParameters.SearchQuery.Trim();
+                var searchQuery = shopResourceParameters.SearchQuery.Trim();
                 collection = collection.Where(a => a.Name.Contains(searchQuery));
             }
 
-            if (!string.IsNullOrWhiteSpace(piesResourceParameters.OrderBy))
+            if (!string.IsNullOrWhiteSpace(shopResourceParameters.OrderBy))
             {
                 // get property mapping dictionary
                 var piePropertyMappingDictionary =
                     _propertyMappingService.GetPropertyMapping<ShopDto, Shop>();
-                collection = collection.ApplySort(piesResourceParameters.OrderBy, piePropertyMappingDictionary);
+                collection = collection.ApplySort(shopResourceParameters.OrderBy, piePropertyMappingDictionary);
             }
 
             return PagedList<Shop>.Create(collection,
-                piesResourceParameters.PageNumber,
-                piesResourceParameters.PageSize);
+                shopResourceParameters.PageNumber,
+                shopResourceParameters.PageSize);
         }
 
         public Shop GetShop(Guid shopId)
@@ -281,17 +286,6 @@ namespace Pies.API.Services
 
             return _context.Shops
               .Where(c => c.Id == shopId).FirstOrDefault();
-        }
-
-        public Location GetLocation(Guid locationId)
-        {
-            if (locationId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(locationId));
-            }
-
-            return _context.Locations
-                .Where(c => c.Id == locationId).FirstOrDefault();
         }
 
         public bool Save()
@@ -312,5 +306,7 @@ namespace Pies.API.Services
                // dispose resources when needed
             }
         }
+
+        
     }
 }

@@ -74,8 +74,8 @@ namespace Pies.API.Migrations
                             City = "Christchurch",
                             Country = "New Zealand",
                             County = "Canterbury",
-                            Latitude = -43.549126911758606,
-                            Longitude = 172.62206744255727,
+                            Latitude = -43.484311485809485,
+                            Longitude = 172.57846588303863,
                             Street = "409 Harewood Rd"
                         },
                         new
@@ -84,8 +84,8 @@ namespace Pies.API.Migrations
                             City = "Auckland",
                             Country = "New Zealand",
                             County = "Auckland",
-                            Latitude = -36.724402083233649,
-                            Longitude = 174.69367782327271,
+                            Latitude = -36.724023689201132,
+                            Longitude = 174.69388166860529,
                             Street = "247 Dairy Flat Highway"
                         });
                 });
@@ -364,6 +364,8 @@ namespace Pies.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LocationId");
+
                     b.ToTable("Shops");
 
                     b.HasData(
@@ -427,6 +429,17 @@ namespace Pies.API.Migrations
                         .HasForeignKey("PieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Pies.API.Entities.Shop", b =>
+                {
+                    b.HasOne("Pies.API.Entities.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("Pies.API.Entities.Pie", b =>
